@@ -8,7 +8,7 @@ public class Main {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		// TODO Auto-generated method stub
+
 		ModuleLoader.getInstance().loadModules();
 		List<iModule> modules = ModuleLoader.getInstance().getListModules();
 		if(!modules.isEmpty())

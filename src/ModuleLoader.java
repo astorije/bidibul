@@ -11,7 +11,6 @@ import java.util.List;
  * @author Nicolas B.
  */
 public class ModuleLoader {
-
 	 /**
      * L'instance du ModuleLoader.
      * @see ModuleLoader#getInstance()
@@ -21,7 +20,7 @@ public class ModuleLoader {
 	/**
      * La liste qui contient une instance de chaque module.
      * @see ModuleLoader#loadModules()
-     * @see ModuleLoader#getModuleArray()
+     * @see ModuleLoader#getListModules()
      */
 	List<iModule> listModule;
 	
@@ -30,6 +29,14 @@ public class ModuleLoader {
      * @see ModuleLoader#loadModules()
      */
 	private static String moduleDir = "modules";
+	
+	/**
+     * Séparateur système
+     * @see ModuleLoader#loadModules()
+     * @see ModuleLoader#findModulesName
+     */
+	private static String sep = System.getProperty("file.separator");
+	
 	
 	/**
 	 * Constructeur privé.
@@ -64,15 +71,14 @@ public class ModuleLoader {
 	 * @see ModuleLoader#findModulesName()
 	 * @see ModuleLoader#listModule
 	 */
-	public void loadModules()
-	{
+	public void loadModules(){
 		String[] className = findModulesName();
+		
 		if (className != null){
-			
 			// Prépare le ClassLoader
 			URLClassLoader loader=null;
 			try {
-				loader = new URLClassLoader(new URL[] {new URL("file://"+System.getProperty("user.dir")+"\\"+moduleDir+"\\")});
+				loader = new URLClassLoader(new URL[] {new URL("file://" + System.getProperty("user.dir") + sep + moduleDir + sep)});
 			} catch (MalformedURLException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -108,8 +114,7 @@ public class ModuleLoader {
 	 * @see ModuleLoader#loadModules()
 	 * @see ModuleLoader#moduleDir
 	 */
-	private String[] findModulesName()
-	{
+	private String[] findModulesName(){
 		// Filtre les fichiers .class du du dossier contenant les modules
 		FilenameFilter javaFilter = new FilenameFilter() { 
 			public boolean accept(File arg0, String arg1) { 
@@ -117,7 +122,7 @@ public class ModuleLoader {
 			} 
 		}; 
 		// Extrait les noms des classes par rapport aux noms des fichiers du dossier
-		File dir = new File("./" + moduleDir); 
+		File dir = new File("." + sep + moduleDir); 
 		String[] fileName = dir.list(javaFilter);
 		String[] className = null;
 		if (fileName != null){
