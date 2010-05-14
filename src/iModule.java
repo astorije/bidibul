@@ -1,20 +1,20 @@
-import java.util.Observer;
 
 /**
  * Interface des modules
  * @author Nicolas B.
  */
-public interface iModule extends Observer {
-	
+@Deprecated
+public interface iModule {
+
 	/**
-	 * Renvoie le nom du module. Ce nom est utilisé par le rotorMenu.
+	 * Renvoie le nom du module. Ce nom est utilisï¿½ par le rotorMenu.
 	 * @return String : Le nom du module
 	 */
 	public String getName();
-	
+
 	/**
-	 * Lance l'exécution du module.
+	 * Lance l'exï¿½cution du module.
 	 */
 	public void run();
-	
+
 }
