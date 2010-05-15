@@ -27,8 +27,8 @@ public class NotificationPanel extends JPanel implements Observer {
 	private JLabel _backgroundImage;
 
 	public static final int BUBBLE_PADDING = 10; // pixels
-	public static final ImageIcon NOTICE_BUBBLE_IMG = new ImageIcon("img/speech_bubble_notice.png");//.getImage();
-	public static final ImageIcon ERROR_BUBBLE_IMG = new ImageIcon("img/speech_bubble_error.png");//.getImage();
+	public static final ImageIcon NOTICE_BUBBLE_IMG = new ImageIcon("img/speech_bubble_notice_alt.png");//.getImage();
+	public static final ImageIcon ERROR_BUBBLE_IMG = new ImageIcon("img/speech_bubble_error_alt.png");//.getImage();
 
 	public NotificationPanel(AbstractModel model) {
 		this._model = model;

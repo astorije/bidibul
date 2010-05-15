@@ -12,6 +12,8 @@ import javax.swing.JLabel;
 
 import models.Flash;
 
+import com.sun.awt.AWTUtilities;
+
 /**
  * Frame principale du programme.
  * Appelée par le main.
@@ -50,7 +52,10 @@ public class MainFrame extends JFrame {
 	 */
 	public void initialize() {
 
-		this.setLayout(null);									//Définition du Layout
+		this.setLayout(null);							//Définition du Layout
+
+		AWTUtilities.setWindowOpaque(this, false); 				//Rend la fenêtre transparente
+		System.out.println("opacity : " + AWTUtilities.getWindowOpacity(this));
 
 		JButton fermer = new JButton("Fermer");					//Création d'un bouton fermeture
 		fermer.setBounds(20, 60, 70, 20);						//Positionnement du bouton
@@ -63,20 +68,26 @@ public class MainFrame extends JFrame {
 		this.add(fermer);										//Ajout du bouton à la fenêtre
 
 	//--CREATION DU BIDIBUL
-		_bidibul = new JLabel(new ImageIcon("img/bidibul.png"));	//Création du bidibul
+		_bidibul = new JLabel();	//Création du bidibul
+		_bidibul.setIcon(new ImageIcon("img/bidibul.png"));
 		_bidibul.setBounds(300, 250, 100, 100);						//Positionnement
 		_bidibul.addMouseListener(new actionOnClic());
+		_bidibul.setOpaque(false);
 		this.add(_bidibul);
+
 	//-- Fin création bidibul
 
+	// PieMenuPanel
 		// NotificationPanel
 		NotificationPanel panNotification = new NotificationPanel(Flash.getInstance());
 		panNotification.setPreferredSize(getMaximumSize());
 		panNotification.setBounds(200, 100, 311, 133);
+		panNotification.setOpaque(false);						//Cache le background de la bulle de notification
 		this.add(panNotification);
 
 		this.setSize(640, 480);									//Taille de la fenêtre
 
+		_pieMenuPanel = new PieMenuPanel (MainFrame.this.getContentPane() , listIconMenuClicSimple, _bidibul.getX()+ _bidibul.getWidth()/2, _bidibul.getY()+ _bidibul.getHeight()/2 );
 		/**
 		 * @todo Remplir le String[] listIconMenuClicSimple
 		 * @todo Implémenter la création d'une String[] pour le cas iDroppable
@@ -91,13 +102,16 @@ public class MainFrame extends JFrame {
 				/* -- clic gauche -- */
 				if (e.getButton() == MouseEvent.BUTTON1) 				//Si clic gauche
 				{
-					if (_pieMenuPanel == null)							//Ouverture d'un PieMenu
-						_pieMenuPanel = new PieMenuPanel (MainFrame.this.getContentPane() , listIconMenuClicSimple, _bidibul.getX()+ _bidibul.getWidth()/2, _bidibul.getY()+ _bidibul.getHeight()/2 );
-					else
-					{
-						_pieMenuPanel.fermerMenu();						//Fermeture du PieMenu
-						e.getComponent().getParent().remove(_pieMenuPanel);
-						_pieMenuPanel = null;							//Annulation
+
+					if (_pieMenuPanel.getIconVisible() == false) {
+						_pieMenuPanel.setIconVisible(true);				//Affiche le PieMenu
+						MainFrame.this.getContentPane().update(MainFrame.this.getContentPane().getGraphics());
+						//System.out.println("click show!");
+					}
+					else {
+						_pieMenuPanel.setIconVisible(false);			//Cache le PieMenu
+						MainFrame.this.getContentPane().update(MainFrame.this.getContentPane().getGraphics());
+						//System.out.println("click hide!");
 					}
 				}
 				/* -- clic droit -- */
