@@ -3,8 +3,8 @@ package models;
 import java.util.Observable;
 
 /**
- * Superclasse des modÃ¨les
- * @author JÃ©rÃ©mie ASTORI
+ * Superclasse des modèles
+ * @author Jérémie ASTORI
  *
  */
 public abstract class AbstractModel extends Observable

@@ -4,7 +4,7 @@ import java.util.Observable;
 /**
  * Superclasse abstraite des modules.
  * @author Nicolas BRUNET
- * @author JÃ©rÃ©mie ASTORI
+ * @author Jérémie ASTORI
  */
 abstract public class BidibulModule extends Observable {
 	private String _notice;
@@ -47,13 +47,13 @@ abstract public class BidibulModule extends Observable {
 	}
 
 	/**
-	 * Renvoie le nom du module. Ce nom est utilisÃ© par le RotorMenu.
+	 * Renvoie le nom du module. Ce nom est utilisé par le RotorMenu.
 	 * @return Le nom du module
 	 */
 	abstract public String getName();
 
 	/**
-	 * ExÃ©cute une action pour test
+	 * Exécute une action pour test
 	 */
 	@Deprecated
 	abstract public void run();

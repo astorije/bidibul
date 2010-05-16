@@ -1,108 +1,107 @@
 package views;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 
 import javax.swing.ImageIcon;
-import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.WindowConstants;
 
 import models.Flash;
 
-import com.sun.awt.AWTUtilities;
+//import com.sun.awt.AWTUtilities;
 
 /**
  * Frame principale du programme.
- * Appelée par le main.
+ * AppelÃ©e par le main.
  *
  * @author Jérémie ASTORI
  * @author Dominique CLAUSE
  */
-public class MainFrame extends JFrame {
+public class MainFrame extends JFrame implements WindowListener {
 	private static final long serialVersionUID = 1L;
 
-	private JLabel _bidibul;							//!< le bidibul
+	private JLabel _bidibul;
 	private String[] listIconMenuClicSimple = {"img/mail.png", "img/facebook.png", "img/msn.png", "img/word.png", "img/zip.png", "img/play.png", "img/trash.png", "img/search.png"};
-														//!< Liste des icones au clic
-	private PieMenuPanel _pieMenuPanel = null; 			//<! le PieMenu
+	private PieMenuPanel _pieMenuPanel = null;
+	private RightClickMenu _rightClickMenu;
 
 	/**
 	 * CONSTRUCTEUR
 	 */
 	public MainFrame() {
-		this.setUndecorated(true);	//rend la fenêtre non décorée
-		output();					//définition des paramètres de fermeture
-		initialize();				//Initialisation et affichage
+		this.output();
+		this.initialize();
 	}
 
 	/**
-	 * Définition des paramètres de fermture
+	 * Définition des paramètres de fenêtrage
 	 */
 	public void output() {
-		this.setDefaultCloseOperation(javax.swing.JFrame.EXIT_ON_CLOSE);
+		// Ne rien faire à la fermeture ([X] ou Alt-F4) car on veut une fermeture personnalisée
+	    this.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
+
+	    // Surcharge les opérations de fenêtrage, comme la fermeture de l'application par exemple
+	    this.addWindowListener(this);
+
+	    // Supprime la barre de titre et la bordure de la fenêtre
+	    this.setUndecorated(true);
+
+	    this.setVisible(true);
 		this.pack();
-		this.setVisible(true);
+
+		// AWTUtilities est...
+		// @Deprecated
+		//AWTUtilities.setWindowOpaque(this, false); 				//Rend la fenêtre transparente
+		//System.out.println("opacity : " + AWTUtilities.getWindowOpacity(this));
+
 	}
 
 	/**
 	 * Initialisation des composants et affichage
 	 */
 	public void initialize() {
-
-		this.setLayout(null);							//Définition du Layout
-
-		AWTUtilities.setWindowOpaque(this, false); 				//Rend la fenêtre transparente
-		System.out.println("opacity : " + AWTUtilities.getWindowOpacity(this));
-
-		JButton fermer = new JButton("Fermer");					//Création d'un bouton fermeture
-		fermer.setBounds(20, 60, 70, 20);						//Positionnement du bouton
-		fermer.addActionListener(new ActionListener() {			//Sur clic sur le bouton...
-			@Override
-            public void actionPerformed(ActionEvent event) {		//...fermeture de l'application
-                System.exit(0);
-            }
-        });
-		this.add(fermer);										//Ajout du bouton à la fenêtre
+		this.setSize(640, 480);
+		this.setLayout(null);
 
 	//--CREATION DU BIDIBUL
-		_bidibul = new JLabel();	//Création du bidibul
+		// @todo Séparer la classe pour plus de modularité
+		_bidibul = new JLabel();
 		_bidibul.setIcon(new ImageIcon("img/bidibul.png"));
-		_bidibul.setBounds(300, 250, 100, 100);						//Positionnement
+		_bidibul.setBounds(300, 250, 100, 100);
 		_bidibul.addMouseListener(new actionOnClic());
 		_bidibul.setOpaque(false);
 		this.add(_bidibul);
-
 	//-- Fin création bidibul
 
-	// PieMenuPanel
 		// NotificationPanel
-		NotificationPanel panNotification = new NotificationPanel(Flash.getInstance());
-		panNotification.setPreferredSize(getMaximumSize());
-		panNotification.setBounds(200, 100, 311, 133);
-		panNotification.setOpaque(false);						//Cache le background de la bulle de notification
-		this.add(panNotification);
+		FlashPanel panFlash = new FlashPanel(Flash.getInstance());
+		panFlash.setPreferredSize(this.getMaximumSize());
+		panFlash.setBounds(200, 100, 311, 133);
+		this.add(panFlash);
 
-		this.setSize(640, 480);									//Taille de la fenêtre
-
+		// PieMenuPanel
 		_pieMenuPanel = new PieMenuPanel (MainFrame.this.getContentPane() , listIconMenuClicSimple, _bidibul.getX()+ _bidibul.getWidth()/2, _bidibul.getY()+ _bidibul.getHeight()/2 );
 		/**
 		 * @todo Remplir le String[] listIconMenuClicSimple
 		 * @todo Implémenter la création d'une String[] pour le cas iDroppable
 		 */
 
+		// Création du menu contextuel
+		this._rightClickMenu = new RightClickMenu(this);
+
+		// Ajout du listener de menu contextuel
+	    this._bidibul.addMouseListener(new RightClickListener());
 	}
 
 	public class actionOnClic extends MouseAdapter {
 			@Override
-			public void mouseReleased(MouseEvent e)						//sur clic de la souris
-			{
-				/* -- clic gauche -- */
-				if (e.getButton() == MouseEvent.BUTTON1) 				//Si clic gauche
-				{
-
+			public void mouseReleased(MouseEvent e) {
+				// Clic gauche
+				if (e.getButton() == MouseEvent.BUTTON1) {
 					if (_pieMenuPanel.getIconVisible() == false) {
 						_pieMenuPanel.setIconVisible(true);				//Affiche le PieMenu
 						MainFrame.this.getContentPane().update(MainFrame.this.getContentPane().getGraphics());
@@ -114,13 +113,42 @@ public class MainFrame extends JFrame {
 						//System.out.println("click hide!");
 					}
 				}
-				/* -- clic droit -- */
-				if (e.getButton() == MouseEvent.BUTTON2)
-				{
-					/**
-					 * @todo implémenter le menu contextuel
-					 */
-				}
 			}
 		}
+
+	class RightClickListener extends MouseAdapter {
+		@Override
+		public void mouseReleased(MouseEvent e) { // Menu contextuel au clic droit
+			if (e.getButton() == MouseEvent.BUTTON3) {
+	            MainFrame.this._rightClickMenu.show(e.getComponent(), e.getX(), e.getY());
+	        }
+	    }
+	}
+
+	@Override
+	public void windowActivated(WindowEvent arg0) {}
+
+	@Override
+	public void windowClosed(WindowEvent arg0) {}
+
+	/**
+	 * Surcharge la fermeture de la fenêtre pour la personnaliser
+	 * @see RightClickMenu#exit()
+	 */
+	@Override
+	public void windowClosing(WindowEvent arg0) {
+		RightClickMenu.exit();
+	}
+
+	@Override
+	public void windowDeactivated(WindowEvent arg0) {}
+
+	@Override
+	public void windowDeiconified(WindowEvent arg0) {}
+
+	@Override
+	public void windowIconified(WindowEvent arg0) {}
+
+	@Override
+	public void windowOpened(WindowEvent arg0) {}
 }

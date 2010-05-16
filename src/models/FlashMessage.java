@@ -2,6 +2,7 @@ package models;
 
 /**
  * Message d'erreur ou d'information
+ * @author Jérémie ASTORI
  */
 public class FlashMessage {
 	private final String _type;

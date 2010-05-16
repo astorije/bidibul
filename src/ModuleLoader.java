@@ -146,7 +146,7 @@ public class ModuleLoader {
 	 * @todo Pourquoi ne pas utiliser instanceof à la place ?
 	 * @deprecated Je pense que l'on peut utiliser extends_BidibulModule désormais
 	 */
-	@Deprecated
+/*	@Deprecated
 	private boolean implement_iModule(Class<?> c){
 		Class<?>[] interfaces = c.getInterfaces();
 		for (int i=0; i<interfaces.length;i++){
@@ -155,7 +155,7 @@ public class ModuleLoader {
 		}
 		return false;
 	}
-
+*/
 	/**
 	 * Renvoie true si la classe hérite de la classe BidibulModule
 	 * @see BidibulModule

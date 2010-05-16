@@ -7,9 +7,9 @@ import java.util.Observer;
 import utils.BidibulModule;
 
 /**
- * ModÃ¨le du gestionnaire des messages d'information et d'erreur.
+ * Modèle du gestionnaire des messages d'information et d'erreur.
  * Flash est un singleton.
- * @author JÃ©rÃ©mie ASTORI
+ * @author Jérémie ASTORI
  */
 public class Flash extends AbstractModel implements Observer {
 	private static Flash _instance;
@@ -26,11 +26,19 @@ public class Flash extends AbstractModel implements Observer {
 		this.notifyObservers();
 	}
 
-	public void setNotice(String msg) {
+	public static void notice(String msg) {
+		Flash.getInstance().setNotice(msg);
+	}
+
+	private void setNotice(String msg) {
 		this.setFlashMessage("notice", msg);
 	}
 
-	public void setError(String msg) {
+	public static void error(String msg) {
+		Flash.getInstance().setError(msg);
+	}
+
+	private void setError(String msg) {
 		this.setFlashMessage("error", msg);
 	}
 

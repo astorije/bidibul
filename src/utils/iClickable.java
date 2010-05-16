@@ -2,13 +2,13 @@ package utils;
 
 
 /**
- * Interface pour les modules devant rÃ©agir au clic sur le menu
- * @author JÃ©rÃ©mie ASTORI
+ * Interface pour les modules devant réagir au clic sur le menu
+ * @author Jérémie ASTORI
  */
 public interface iClickable {
 
 	/**
-	 * Action Ã  exÃ©cuter au clic sur le menu
+	 * Action à exécuter au clic sur le menu
 	 */
 	abstract public void click();
 }
