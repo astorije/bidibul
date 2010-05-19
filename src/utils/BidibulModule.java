@@ -51,10 +51,4 @@ abstract public class BidibulModule extends Observable {
 	 * @return Le nom du module
 	 */
 	abstract public String getName();
-
-	/**
-	 * Exécute une action pour test
-	 */
-	@Deprecated
-	abstract public void run();
 }
