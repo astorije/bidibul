@@ -28,6 +28,10 @@ public class MainFrame extends JFrame implements WindowListener {
 	private String[] listIconMenuClicSimple = {"img/mail.png", "img/facebook.png", "img/msn.png", "img/word.png", "img/zip.png", "img/play.png", "img/trash.png", "img/search.png"};
 	private PieMenuPanel _pieMenuPanel = null;
 	private RightClickMenu _rightClickMenu;
+	//private Window _backgroundWindow = new Window(this);
+
+
+
 
 	/**
 	 * CONSTRUCTEUR
@@ -66,6 +70,16 @@ public class MainFrame extends JFrame implements WindowListener {
 	public void initialize() {
 		this.setSize(640, 480);
 		this.setLayout(null);
+
+		/*try {
+	        System.setProperty("sun.java2d.noddraw", "true");
+	        UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+	    }
+	    catch(Exception e) {
+	    }
+	    System.out.println("alpha ? " + WindowUtils.isWindowAlphaSupported());
+		WindowUtils.setWindowAlpha(this, .5f); */
+
 
 	//--CREATION DU BIDIBUL
 		// @todo Séparer la classe pour plus de modularité
