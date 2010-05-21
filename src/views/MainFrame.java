@@ -50,6 +50,7 @@ public class MainFrame extends JFrame implements WindowListener {
 		{
 			Iterator<BidibulModule> i = _listeModules.listIterator();
 			while (i.hasNext()) {
+				System.out.println("mod");
 				i.next().onLoad();
 			}
 		}
