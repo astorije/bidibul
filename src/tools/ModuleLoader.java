@@ -27,9 +27,8 @@ public class ModuleLoader {
      * La liste qui contient une instance de chaque module.
      * @see ModuleLoader#loadModules()
      * @see ModuleLoader#getListModules()
-     * @todo Affecter une visibilité, la variable est-elle static ?
      */
-	List<BidibulModule> listModule;
+	private List<BidibulModule> listModule;
 
 	/**
      * Le nom du dossier o� sont stock�s les .class des modules.
@@ -88,7 +87,6 @@ public class ModuleLoader {
 				try {
 					Class<?> externalClass = loader.loadClass(className[i]);
 
-					//if (implement_iModule(externalClass) ) {
 					if (extends_BidibulModule(externalClass) ) {
 						Object externalObject = externalClass.newInstance();
 						((Observable)externalObject).addObserver(Flash.getInstance());
