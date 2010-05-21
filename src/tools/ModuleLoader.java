@@ -70,7 +70,7 @@ public class ModuleLoader {
 	 * @see ModuleLoader#findModulesName()
 	 * @see ModuleLoader#listModule
 	 */
-	public void loadModules(){
+	public boolean loadModules(){
 		String[] className = findModulesName();
 
 		if (className != null){
@@ -80,6 +80,7 @@ public class ModuleLoader {
 				loader = new URLClassLoader(new URL[] {new URL("file://" + System.getProperty("user.dir") + "/" + moduleDir + "/")});
 			} catch (MalformedURLException e) {
 				e.printStackTrace();
+				return false;
 			}
 
 			listModule.clear();
@@ -97,13 +98,17 @@ public class ModuleLoader {
 				}
 				catch (ClassNotFoundException e) {
 					e.printStackTrace();
+					return false;
 				} catch (InstantiationException e) {
 					e.printStackTrace();
+					return false;
 				} catch (IllegalAccessException e) {
 					e.printStackTrace();
+					return false;
 				}
 			}
 		}
+		return true;
 	}
 
 	/**

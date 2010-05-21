@@ -51,4 +51,9 @@ abstract public class BidibulModule extends Observable {
 	 * @return Le nom du module
 	 */
 	abstract public String getName();
+
+	/**
+	 * Effectue une action au chargement en surcharge du constructeur
+	 */
+	abstract public void onLoad();
 }

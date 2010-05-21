@@ -1,14 +1,9 @@
-import java.util.Iterator;
-import java.util.List;
-
-import tools.ModuleLoader;
-import utils.BidibulModule;
-import views.MainFrame;
+import views.LoaderFrame;
 
 public class Main {
 	public static void main(String[] args) {
-		new MainFrame();
-
+		new LoaderFrame();
+/*
 		ModuleLoader.getInstance().loadModules();
 		List<BidibulModule> modules = ModuleLoader.getInstance().getListModules();
 		if(!modules.isEmpty())
@@ -18,5 +13,7 @@ public class Main {
 				System.out.println(i.next().getName());
 			}
 		}
+*/
 	}
+
 }
