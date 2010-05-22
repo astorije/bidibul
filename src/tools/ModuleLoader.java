@@ -1,12 +1,16 @@
 package tools;
 import java.io.File;
 import java.io.FilenameFilter;
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.List;
 import java.util.Observable;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
 
 import models.Flash;
 import utils.BidibulModule;
@@ -14,7 +18,7 @@ import utils.BidibulModule;
 /**
  * Classe de chargement des modules. Le ModuleLoader est un singleton.
  * @author Nicolas B.
- * @todo GÃ©rer les modules activÃ©s/desactivÃ©s
+ * @todo Gérer les modules activés/desactivés
  */
 public class ModuleLoader {
 	 /**
@@ -31,13 +35,13 @@ public class ModuleLoader {
 	private List<BidibulModule> listModule;
 
 	/**
-     * Le nom du dossier oï¿½ sont stockï¿½s les .class des modules.
+     * Le nom du dossier où sont stockés les .class des modules.
      * @see ModuleLoader#loadModules()
      */
 	private static String moduleDir = "modules";
 
 	/**
-	 * Constructeur privï¿½.
+	 * Constructeur privé.
 	 * @see ModuleLoader#getInstance()
 	 */
 	private ModuleLoader() {
@@ -56,8 +60,8 @@ public class ModuleLoader {
     }
 
 	/**
-	 * Retourne le tableau des modules.
-	 * @return iModule[] null si aucun module chargï¿½
+	 * Retourne la liste des modules.
+	 * @return List<BidibulModule> null si aucun module chargé
 	 * @see ModuleLoader#loadModules()
 	 */
 	public List<BidibulModule> getListModules(){
@@ -65,44 +69,65 @@ public class ModuleLoader {
 	}
 
 	/**
-	 * Charge les modules. Remplit le tableau moduleArray.
+	 * Charge les modules. Remplit la liste listModule.
 	 * @see ModuleLoader#findModulesName()
 	 * @see ModuleLoader#listModule
 	 */
 	public boolean loadModules(){
-		String[] className = findModulesName();
+		String[] jarName = findJarNames();
 
-		if (className != null){
-			// Prï¿½pare le ClassLoader
-			URLClassLoader loader=null;
-			try {
-				loader = new URLClassLoader(new URL[] {new URL("file://" + System.getProperty("user.dir") + "/" + moduleDir + "/")});
-			} catch (MalformedURLException e) {
-				e.printStackTrace();
-				return false;
-			}
-
+		if (jarName != null){
+			Enumeration<JarEntry> jarFiles;
 			listModule.clear();
-			for (int i=0; i<className.length; i++){
+			for (int i=0; i<jarName.length; i++){
+				// Prépare le ClassLoader
+				URLClassLoader loader=null;
 				try {
-					Class<?> externalClass = loader.loadClass(className[i]);
-
-					if (extends_BidibulModule(externalClass) ) {
-						Object externalObject = externalClass.newInstance();
-						((Observable)externalObject).addObserver(Flash.getInstance());
-						listModule.add((BidibulModule) externalObject);
-						System.out.println("Class loaded: " + externalClass.getCanonicalName());
-					}
+					loader = new URLClassLoader(new URL[] {new URL("file:/" + System.getProperty("user.dir") + "/" + moduleDir + "/" + jarName[i])});
+				} catch (MalformedURLException e) {
+					e.printStackTrace(); return false;
 				}
-				catch (ClassNotFoundException e) {
-					e.printStackTrace();
-					return false;
-				} catch (InstantiationException e) {
-					e.printStackTrace();
-					return false;
-				} catch (IllegalAccessException e) {
-					e.printStackTrace();
-					return false;
+
+				//On charge le jar en mémoire
+				JarFile jar = null;
+				try {
+					jar = new JarFile("./" + moduleDir + "/" + jarName[i]);
+				} catch (IOException e) {
+					e.printStackTrace(); return false;
+				}
+
+				//On récupère le contenu du jar
+				jarFiles = jar.entries();
+
+				while(jarFiles.hasMoreElements()){
+					String fileName = jarFiles.nextElement().toString();
+
+					//Vérifie que le fichier courant est un .class
+					if (fileName.endsWith(".class"))
+					{
+						String className = fileName.substring(0,fileName.length()-6);
+						className = className.replaceAll("/",".");
+
+						try {
+							Class<?> externalClass = Class.forName(className ,true,loader);
+							//Class<?> externalClass = loader.loadClass(className);
+
+							// Vérifie que la classe est un BidibulModule
+							if (extends_BidibulModule(externalClass) ) {
+								Object externalObject = externalClass.newInstance();
+								((Observable)externalObject).addObserver(Flash.getInstance());
+								listModule.add((BidibulModule) externalObject);
+								System.out.println("BidibulModule loaded: " + externalClass.getCanonicalName());
+							}
+						}
+						catch (ClassNotFoundException e) {
+							e.printStackTrace(); return false;
+						} catch (InstantiationException e) {
+							e.printStackTrace(); return false;
+						} catch (IllegalAccessException e) {
+							e.printStackTrace(); return false;
+						}
+					}
 				}
 			}
 		}
@@ -110,32 +135,26 @@ public class ModuleLoader {
 	}
 
 	/**
-	 * Renvoie un tableau contenant le nom des classes ï¿½ charger
+	 * Renvoie un tableau contenant le nom des fichiers jar à charger
 	 * @see ModuleLoader#loadModules()
 	 * @see ModuleLoader#moduleDir
 	 */
-	private String[] findModulesName(){
-		// Filtre les fichiers .class du du dossier contenant les modules
+	private String[] findJarNames(){
+		// Filtre les fichiers .jar du du dossier contenant les modules
 		FilenameFilter javaFilter = new FilenameFilter() {
 			public boolean accept(File arg0, String arg1) {
-				return arg1.endsWith(".class");
+				return (arg1.endsWith(".jar")) ;
 			}
 		};
-		// Extrait les noms des classes par rapport aux noms des fichiers du dossier
+
 		File dir = new File("./" + moduleDir);
-		String[] fileName = dir.list(javaFilter);
-		String[] className = null;
-		if (fileName != null){
-			className = new String[fileName.length];
-			for(int i=0;i<fileName.length;i++){
-				className[i] = fileName[i].substring(0,fileName[i].lastIndexOf(".class"));
-			}
-		}
-		return className;
+		String[] fileNames = dir.list(javaFilter);
+
+		return fileNames;
 	}
 
 	/**
-	 * Renvoie true si la classe hÃ©rite de la classe BidibulModule
+	 * Renvoie true si la classe hérite de la classe BidibulModule
 	 * @see BidibulModule
 	 * @see ModuleLoader#loadModules()
 	 * @todo Mieux que "Class<?>" ?
