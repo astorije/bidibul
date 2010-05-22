@@ -15,6 +15,11 @@ import javax.swing.WindowConstants;
 import models.Flash;
 import tools.ModuleLoader;
 import utils.BidibulModule;
+import views.FlashPanel;
+import views.PieMenuPanel;
+import views.RightClickMenu;
+
+import com.sun.jna.platform.WindowUtils;
 
 //import com.sun.awt.AWTUtilities;
 
@@ -68,8 +73,12 @@ public class MainFrame extends JFrame implements WindowListener {
 
 	    // Supprime la barre de titre et la bordure de la fenêtre
 	    this.setUndecorated(true);
+		super.setVisible(true);
 
-	    this.setVisible(true);
+		// Mise en place de la transparence de la fenêtre
+		System.setProperty("sun.java2d.noddraw", "true");
+		WindowUtils.setWindowTransparent(this, true);
+
 		this.pack();
 
 		// AWTUtilities est...
@@ -90,10 +99,11 @@ public class MainFrame extends JFrame implements WindowListener {
 		// Vérif
 		VerifList("_listModules", _listeModules);
 
-		//------
+
 
 		this.setSize(640, 480);
 		this.setLayout(null);
+
 
 		/**try {
 	        System.setProperty("sun.java2d.noddraw", "true");
@@ -133,6 +143,8 @@ public class MainFrame extends JFrame implements WindowListener {
 
 		// Ajout du listener de menu contextuel
 	    this._bidibul.addMouseListener(new RightClickListener());
+
+
 	}
 
 	public class actionOnClic extends MouseAdapter {
@@ -144,12 +156,12 @@ public class MainFrame extends JFrame implements WindowListener {
 						_pieMenuPanel.refresh(_listeModulesClickable);
 						_pieMenuPanel.setIconVisible(true);				//Affiche le PieMenu
 						MainFrame.this.getContentPane().update(MainFrame.this.getContentPane().getGraphics());
-						//System.out.println("click show!");
+						System.out.println("click show!");
 					}
 					else {
 						_pieMenuPanel.setIconVisible(false);			//Cache le PieMenu
 						MainFrame.this.getContentPane().update(MainFrame.this.getContentPane().getGraphics());
-						//System.out.println("click hide!");
+						System.out.println("click hide!");
 					}
 				}
 			}
