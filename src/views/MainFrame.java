@@ -7,25 +7,18 @@ import java.awt.event.WindowListener;
 import java.util.ArrayList;
 import java.util.Iterator;
 
-import javax.swing.ImageIcon;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
 import javax.swing.WindowConstants;
 
 import models.Flash;
 import tools.ModuleLoader;
 import utils.BidibulModule;
-import views.FlashPanel;
-import views.PieMenuPanel;
-import views.RightClickMenu;
 
-import com.sun.jna.platform.WindowUtils;
-
-//import com.sun.awt.AWTUtilities;
+//import com.sun.awt.AWTUtilities; // @todo kill me
 
 /**
  * Frame principale du programme.
- * AppelÃ©e par le main.
+ * Appelée par le main.
  *
  * @author Jérémie ASTORI
  * @author Dominique CLAUSE
@@ -33,10 +26,10 @@ import com.sun.jna.platform.WindowUtils;
 public class MainFrame extends JFrame implements WindowListener {
 	private static final long serialVersionUID = 1L;
 
-	private JLabel _bidibul;
+	private BidibulPanel _bidibul;
 	//private String[] listIconMenuClicSimple = {"img/mail.png", "img/facebook.png", "img/msn.png", "img/word.png", "img/zip.png", "img/play.png", "img/trash.png", "img/search.png"};
 	private PieMenuPanel _pieMenuPanel = null;
-	private RightClickMenu _rightClickMenu;
+	private BidibulPopupMenu _bibidulPopupMenu;
 	private ArrayList<BidibulModule> _listeModules, _listeModulesClickable, _listeModulesDroppable;
 	//private Window _backgroundWindow = new Window(this);
 
@@ -62,6 +55,14 @@ public class MainFrame extends JFrame implements WindowListener {
 	}
 
 	/**
+	 * @todo Constructeur installé par dépit, rien d'autre ne marchant quand aucun module n'est présent...
+	 */
+	public MainFrame() {
+		this.output();
+		this.initialize();
+	}
+
+	/**
 	 * Définition des paramètres de fenêtrage
 	 */
 	public void output() {
@@ -72,12 +73,16 @@ public class MainFrame extends JFrame implements WindowListener {
 	    this.addWindowListener(this);
 
 	    // Supprime la barre de titre et la bordure de la fenêtre
-	    this.setUndecorated(true);
+	    //this.setUndecorated(true); // @todo, en mode dev, super chiant le Undecorated...
+
 		super.setVisible(true);
 
+		// @todo Sous Linux, déclenche : Exception in thread "main" java.lang.IllegalArgumentException: Window GraphicsConfiguration 'X11GraphicsConfig[dev=X11GraphicsDevice[screen=0],vis=0x21]' does not support transparency
+		// at com.sun.jna.platform.WindowUtils$X11WindowUtils.setWindowTransparent(WindowUtils.java:1401)
+		// at com.sun.jna.platform.WindowUtils.setWindowTransparent(WindowUtils.java:1542)
 		// Mise en place de la transparence de la fenêtre
-		System.setProperty("sun.java2d.noddraw", "true");
-		WindowUtils.setWindowTransparent(this, true);
+		//System.setProperty("sun.java2d.noddraw", "true");
+		//WindowUtils.setWindowTransparent(this, true);
 
 		this.pack();
 
@@ -85,7 +90,6 @@ public class MainFrame extends JFrame implements WindowListener {
 		// @Deprecated
 		//AWTUtilities.setWindowOpaque(this, false); 				//Rend la fenêtre transparente
 		//System.out.println("opacity : " + AWTUtilities.getWindowOpacity(this));
-
 	}
 
 	/**
@@ -97,13 +101,10 @@ public class MainFrame extends JFrame implements WindowListener {
 		_listeModulesClickable = new ArrayList<BidibulModule>();
 		_listeModulesDroppable = new ArrayList<BidibulModule>();
 		// Vérif
-		VerifList("_listModules", _listeModules);
-
-
+		//VerifList("_listModules", _listeModules); // @todo JA a desactivé pour cause de crash complet
 
 		this.setSize(640, 480);
 		this.setLayout(null);
-
 
 		/**try {
 	        System.setProperty("sun.java2d.noddraw", "true");
@@ -116,18 +117,16 @@ public class MainFrame extends JFrame implements WindowListener {
 
 	//--CREATION DU BIDIBUL
 		// @todo Séparer la classe pour plus de modularité
-		_bidibul = new JLabel();
-		_bidibul.setIcon(new ImageIcon("img/bidibul.png"));
-		_bidibul.setBounds(300, 250, 100, 100);
+		_bidibul = new BidibulPanel(this);
+		_bidibul.setBounds(200, 200, 300, 300);
 		_bidibul.addMouseListener(new actionOnClic());
-		_bidibul.setOpaque(false);
 		this.add(_bidibul);
 	//-- Fin création bidibul
 
 		// NotificationPanel
 		FlashPanel panFlash = new FlashPanel(Flash.getInstance());
 		panFlash.setPreferredSize(this.getMaximumSize());
-		panFlash.setBounds(200, 100, 311, 133);
+		panFlash.setBounds(200, 50, 311, 133);
 		this.add(panFlash);
 
 		// PieMenuPanel
@@ -135,43 +134,52 @@ public class MainFrame extends JFrame implements WindowListener {
 
 
 		//Analyse des listes (clickable)
-		MiseAJourListeModules(true, null);
-		VerifList("_listModulesClickable", _listeModulesClickable);
+		//MiseAJourListeModules(true, null); // @todo JA a desactivé pour cause de crash complet
+		//VerifList("_listModulesClickable", _listeModulesClickable); // @todo JA a desactivé pour cause de crash complet
 
 		// Création du menu contextuel
-		this._rightClickMenu = new RightClickMenu(this);
+		this._bibidulPopupMenu = new BidibulPopupMenu(this);
 
 		// Ajout du listener de menu contextuel
-	    this._bidibul.addMouseListener(new RightClickListener());
+	    this._bidibul.addMouseListener(new PopupMenuListener());
+
+	    // new ModuleManagerFrame(); // @todo DEV Jérémie ASTORI
 
 
 	}
 
 	public class actionOnClic extends MouseAdapter {
-			@Override
-			public void mouseReleased(MouseEvent e) {
-				// Clic gauche
-				if (e.getButton() == MouseEvent.BUTTON1) {
-					if (_pieMenuPanel.getIconVisible() == false) {
-						_pieMenuPanel.refresh(_listeModulesClickable);
-						_pieMenuPanel.setIconVisible(true);				//Affiche le PieMenu
-						MainFrame.this.getContentPane().update(MainFrame.this.getContentPane().getGraphics());
-						System.out.println("click show!");
-					}
-					else {
-						_pieMenuPanel.setIconVisible(false);			//Cache le PieMenu
-						MainFrame.this.getContentPane().update(MainFrame.this.getContentPane().getGraphics());
-						System.out.println("click hide!");
-					}
+		@Override
+		public void mouseReleased(MouseEvent e) {
+			// Clic gauche
+			if (e.getButton() == MouseEvent.BUTTON1) {
+				if (_pieMenuPanel.getIconVisible() == false) {
+					_pieMenuPanel.refresh(_listeModulesClickable);
+					_pieMenuPanel.setIconVisible(true);				//Affiche le PieMenu
+					MainFrame.this.getContentPane().update(MainFrame.this.getContentPane().getGraphics());
+					System.out.println("click show!");
+				}
+				else {
+					_pieMenuPanel.setIconVisible(false);			//Cache le PieMenu
+					MainFrame.this.getContentPane().update(MainFrame.this.getContentPane().getGraphics());
+					System.out.println("click hide!");
 				}
 			}
 		}
+	}
 
-	class RightClickListener extends MouseAdapter {
+	class PopupMenuListener extends MouseAdapter { // Menu contextuel au clic droit
 		@Override
-		public void mouseReleased(MouseEvent e) { // Menu contextuel au clic droit
-			if (e.getButton() == MouseEvent.BUTTON3) {
-	            MainFrame.this._rightClickMenu.show(e.getComponent(), e.getX(), e.getY());
+		public void mousePressed(MouseEvent e) {
+			if (e.isPopupTrigger()) {
+	            _bibidulPopupMenu.show(e.getComponent(), e.getX(), e.getY());
+	        }
+	    }
+
+		@Override
+		public void mouseReleased(MouseEvent e) {
+			if (e.isPopupTrigger()) {
+	            _bibidulPopupMenu.show(e.getComponent(), e.getX(), e.getY());
 	        }
 	    }
 	}
@@ -243,7 +251,7 @@ public class MainFrame extends JFrame implements WindowListener {
 	 */
 	@Override
 	public void windowClosing(WindowEvent arg0) {
-		RightClickMenu.exit();
+		BidibulPopupMenu.exit();
 	}
 
 	@Override

@@ -16,7 +16,7 @@ import utils.BidibulModule;
  *
  */
 public class LoaderFrame extends JFrame {
-
+	private static final long serialVersionUID = 1L;
 	private List<BidibulModule> listeModule;
 
 	public LoaderFrame()
@@ -46,6 +46,8 @@ public class LoaderFrame extends JFrame {
 		listeModule = ChargerModule();
 		if (listeModule.size() != 0)
 			new MainFrame((ArrayList<BidibulModule>) listeModule);
+		else
+			new MainFrame(); // @todo JA a ajouté pour cause de crash complet ( = 0 modules)
 		this.dispose();
 		//if (listeModule != null)
 

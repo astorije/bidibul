@@ -3,17 +3,17 @@ package utils;
 import java.util.ArrayList;
 
 /**
- * Interface pour les modules devant rÃ©agir au drop d'un fichier sur le Bidibul
- * @author JÃ©rÃ©mie ASTORI
+ * Interface pour les modules devant réagir au drop d'un fichier sur le Bidibul
+ * @author Jérémie ASTORI
  */
 public interface iDroppable {
 	/**
-	 * Action Ã  exÃ©cuter lorsqu'un Ã©lÃ©ment est dÃ©posÃ© sur le Bidibul
+	 * Action à  exécuter lorsqu'un élément est déposé sur le Bidibul
 	 */
 	abstract public void drop();
 
 	/**
-	 * Retourne la liste des extensions supportÃ©es par le glisser-dÃ©poser
+	 * Retourne la liste des extensions supportées par le glisser-déposer
 	 * @return Liste d'extensions
 	 */
 	abstract public ArrayList<String> getAllowedExtensions();

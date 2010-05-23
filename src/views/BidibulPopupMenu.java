@@ -19,7 +19,7 @@ import models.Flash;
  * @author Jérémie ASTORI
  *
  */
-public class RightClickMenu extends JPopupMenu implements ActionListener,
+public class BidibulPopupMenu extends JPopupMenu implements ActionListener,
 															ItemListener {
 	private static final long serialVersionUID = 1L;
 
@@ -29,7 +29,7 @@ public class RightClickMenu extends JPopupMenu implements ActionListener,
 	private static final String ALWAYS_ON_TOP = "Toujours au premier plan";
 	private static final String EXIT = "Quitter Bidibul";
 
-	public RightClickMenu(JFrame frame) {
+	public BidibulPopupMenu(JFrame frame) {
 	    super();
 
 	    this._frame = frame;
@@ -84,6 +84,7 @@ public class RightClickMenu extends JPopupMenu implements ActionListener,
 		if(source.getText() == MODULE_MANAGEMENT) {
 			// @todo : menu des modules
 			System.out.println(MODULE_MANAGEMENT);
+			new ModuleManagerFrame();
 		}
 		else if(source.getText() == EXIT)
 			exit();

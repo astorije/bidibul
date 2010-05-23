@@ -1,6 +1,5 @@
 package views;
 
-import java.awt.Color;
 import java.awt.Font;
 import java.util.Observable;
 import java.util.Observer;
@@ -45,7 +44,7 @@ public class FlashPanel extends JPanel implements Observer {
 		this._txtaMessage.setOpaque(false); // Fond transparent
 		Font f = this._txtaMessage.getFont();
 		this._txtaMessage.setFont(new Font(f.getFontName(), f.getStyle(), f.getSize()+3)); // Police et style du message
-		this._txtaMessage.setDisabledTextColor(Color.BLACK); // Couleur du JTextArea en mode Ã©dition dÃ©sactivÃ©e
+		this._txtaMessage.setDisabledTextColor(this._txtaMessage.getForeground()); // Couleur du JTextArea en mode édition désactivée
 		this._txtaMessage.setBounds( // Position du JTextArea
 			1 + BUBBLE_PADDING,
 			BUBBLE_PADDING,
