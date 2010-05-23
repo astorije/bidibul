@@ -7,14 +7,14 @@ import java.awt.event.WindowListener;
 import java.util.ArrayList;
 import java.util.Iterator;
 
-import javax.swing.JFrame;
 import javax.swing.WindowConstants;
 
 import models.Flash;
 import tools.ModuleLoader;
+import tools.TranslucentFrame;
 import utils.BidibulModule;
 
-//import com.sun.awt.AWTUtilities; // @todo kill me
+// @todo kill me
 
 /**
  * Frame principale du programme.
@@ -23,7 +23,7 @@ import utils.BidibulModule;
  * @author Jérémie ASTORI
  * @author Dominique CLAUSE
  */
-public class MainFrame extends JFrame implements WindowListener {
+public class MainFrame extends TranslucentFrame implements WindowListener {
 	private static final long serialVersionUID = 1L;
 
 	private BidibulPanel _bidibul;
@@ -71,25 +71,10 @@ public class MainFrame extends JFrame implements WindowListener {
 
 	    // Surcharge les opérations de fenêtrage, comme la fermeture de l'application par exemple
 	    this.addWindowListener(this);
-
-	    // Supprime la barre de titre et la bordure de la fenêtre
-	    //this.setUndecorated(true); // @todo, en mode dev, super chiant le Undecorated...
-
-		super.setVisible(true);
-
-		// @todo Sous Linux, déclenche : Exception in thread "main" java.lang.IllegalArgumentException: Window GraphicsConfiguration 'X11GraphicsConfig[dev=X11GraphicsDevice[screen=0],vis=0x21]' does not support transparency
-		// at com.sun.jna.platform.WindowUtils$X11WindowUtils.setWindowTransparent(WindowUtils.java:1401)
-		// at com.sun.jna.platform.WindowUtils.setWindowTransparent(WindowUtils.java:1542)
-		// Mise en place de la transparence de la fenêtre
-		//System.setProperty("sun.java2d.noddraw", "true");
-		//WindowUtils.setWindowTransparent(this, true);
-
+	    this.setVisible(true);
 		this.pack();
 
-		// AWTUtilities est...
-		// @Deprecated
-		//AWTUtilities.setWindowOpaque(this, false); 				//Rend la fenêtre transparente
-		//System.out.println("opacity : " + AWTUtilities.getWindowOpacity(this));
+
 	}
 
 	/**
@@ -121,6 +106,8 @@ public class MainFrame extends JFrame implements WindowListener {
 		_bidibul.setBounds(200, 200, 300, 300);
 		_bidibul.addMouseListener(new actionOnClic());
 		this.add(_bidibul);
+
+		//System.out.println("Bidibul is in " + _bidibul.getParent());
 	//-- Fin création bidibul
 
 		// NotificationPanel
@@ -130,7 +117,7 @@ public class MainFrame extends JFrame implements WindowListener {
 		this.add(panFlash);
 
 		// PieMenuPanel
-		_pieMenuPanel = new PieMenuPanel (MainFrame.this.getContentPane(), _bidibul.getX()+ _bidibul.getWidth()/2, _bidibul.getY()+ _bidibul.getHeight()/2 );
+		_pieMenuPanel = new PieMenuPanel (MainFrame.this, _bidibul.getX()+ _bidibul.getWidth()/2, _bidibul.getY()+ _bidibul.getHeight()/2 );
 
 
 		//Analyse des listes (clickable)
@@ -156,12 +143,12 @@ public class MainFrame extends JFrame implements WindowListener {
 				if (_pieMenuPanel.getIconVisible() == false) {
 					_pieMenuPanel.refresh(_listeModulesClickable);
 					_pieMenuPanel.setIconVisible(true);				//Affiche le PieMenu
-					MainFrame.this.getContentPane().update(MainFrame.this.getContentPane().getGraphics());
+					MainFrame.this.update(MainFrame.this.getGraphics());
 					System.out.println("click show!");
 				}
 				else {
 					_pieMenuPanel.setIconVisible(false);			//Cache le PieMenu
-					MainFrame.this.getContentPane().update(MainFrame.this.getContentPane().getGraphics());
+					MainFrame.this.update(MainFrame.this.getContentPane().getGraphics());
 					System.out.println("click hide!");
 				}
 			}

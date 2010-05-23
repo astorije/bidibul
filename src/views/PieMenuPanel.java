@@ -144,4 +144,11 @@ public class PieMenuPanel{
 			}
 		}
 	}
+
+	public void setOpaque(Boolean b){
+		this.setOpaque(b);
+		for (int i=1; i<= nbreIcons; i++){
+			icons.get("icon" + i).setOpaque(b);
+		}
+	}
 }
