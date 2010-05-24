@@ -7,7 +7,9 @@ import java.awt.HeadlessException;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 
+import com.sun.jna.Platform;
 import com.sun.jna.platform.WindowUtils;
+
 
 
 /*
@@ -30,9 +32,12 @@ public class TranslucentFrame extends JFrame {
 	private Boolean windowTransparent = true;
 
 
+
 	public TranslucentFrame(GraphicsConfiguration gc) {
 		super(gc);
 		this.init();
+
+
 	}
 
 	public TranslucentFrame(String title, GraphicsConfiguration gc) {
@@ -60,9 +65,8 @@ public class TranslucentFrame extends JFrame {
 	@Override
 	public void setVisible(boolean b) {
 		super.setVisible(b);
-		if (b && WindowUtils.isWindowAlphaSupported())
+		if (b && !Platform.isX11())
 			WindowUtils.setWindowTransparent(this, windowTransparent);
-		else System.out.println("WindowAlpha ? " + WindowUtils.isWindowAlphaSupported());
 	}
 
 	@Override
