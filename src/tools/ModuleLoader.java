@@ -83,7 +83,7 @@ public class ModuleLoader {
 				// Prépare le ClassLoader
 				URLClassLoader loader=null;
 				try {
-					loader = new URLClassLoader(new URL[] {new URL("file:/" + System.getProperty("user.dir") + "/" + moduleDir + "/" + jarName[i])});
+					loader = new URLClassLoader(new URL[] {new URL("file:///" + System.getProperty("user.dir") + "/" + moduleDir + "/" + jarName[i])});
 				} catch (MalformedURLException e) {
 					e.printStackTrace(); return false;
 				}
