@@ -19,6 +19,8 @@ public class Main {
 		}
 		*/
 		new LoaderFrame();
+		//new PieMenuPanel (null, 100 + 100,200+ 100 );
+		//this.add(_pieMenuPanel);
 /*
 		ModuleLoader.getInstance().loadModules();
 		List<BidibulModule> modules = ModuleLoader.getInstance().getListModules();

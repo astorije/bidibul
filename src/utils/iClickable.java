@@ -13,5 +13,14 @@ public interface iClickable {
 	 * Action à exécuter au clic sur le menu
 	 */
 	abstract public void click();
-	abstract public ImageIcon getIcon();
+	/**
+	 * Renvoit l'icone à afficher pour le cas Clickable
+	 * @return
+	 */
+	abstract public ImageIcon getClickIcon();
+
+	/**
+	 * Renvoit une information tooltip pour le cas "clickable"
+	 */
+	abstract public String getClickTooltip();
 }

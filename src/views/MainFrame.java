@@ -11,6 +11,7 @@ import javax.swing.WindowConstants;
 
 import models.Flash;
 import tools.ModuleLoader;
+import tools.MyFileTransferHandler;
 import tools.TranslucentFrame;
 import utils.BidibulModule;
 
@@ -27,11 +28,9 @@ public class MainFrame extends TranslucentFrame implements WindowListener {
 	private static final long serialVersionUID = 1L;
 
 	private BidibulPanel _bidibul;
-	//private String[] listIconMenuClicSimple = {"img/mail.png", "img/facebook.png", "img/msn.png", "img/word.png", "img/zip.png", "img/play.png", "img/trash.png", "img/search.png"};
 	private PieMenuPanel _pieMenuPanel = null;
 	private BidibulPopupMenu _bibidulPopupMenu;
-	private ArrayList<BidibulModule> _listeModules, _listeModulesClickable, _listeModulesDroppable;
-	//private Window _backgroundWindow = new Window(this);
+	private ArrayList<BidibulModule> _listeModules, _listeModulesClickable;
 
 	/**
 	 * CONSTRUCTEUR
@@ -40,12 +39,11 @@ public class MainFrame extends TranslucentFrame implements WindowListener {
 		_listeModules = new ArrayList<BidibulModule>(listModuleTemp);
 		this.output();
 		this.initialize();
-		//---
-		//Surcharge du constructeur. Lance la fonction onLoad des modules:
-		//   cette fonction permet la surcharge éventuelle du constructeur
-		//   ex: un module qui change l'apparence du bidibul
-		if(!_listeModules.isEmpty())
-		{
+		// ---
+		// Surcharge du constructeur. Lance la fonction onLoad des modules:
+		// cette fonction permet la surcharge éventuelle du constructeur
+		// ex: un module qui change l'apparence du bidibul
+		if (_listeModules != null && !_listeModules.isEmpty()) {
 			Iterator<BidibulModule> i = _listeModules.listIterator();
 			while (i.hasNext()) {
 				System.out.println("mod");
@@ -66,15 +64,16 @@ public class MainFrame extends TranslucentFrame implements WindowListener {
 	 * Définition des paramètres de fenêtrage
 	 */
 	public void output() {
-		// Ne rien faire à la fermeture ([X] ou Alt-F4) car on veut une fermeture personnalisée
-	    this.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
+		// Ne rien faire à la fermeture ([X] ou Alt-F4) car on veut une
+		// fermeture personnalisée
+		this.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
 
-	    // Surcharge les opérations de fenêtrage, comme la fermeture de l'application par exemple
-	    this.addWindowListener(this);
-	    this.setVisible(true);
+		// Surcharge les opérations de fenêtrage, comme la fermeture de
+		// l'application par exemple
+		this.addWindowListener(this);
+
+		this.setVisible(true);
 		this.pack();
-
-
 	}
 
 	/**
@@ -82,55 +81,53 @@ public class MainFrame extends TranslucentFrame implements WindowListener {
 	 */
 	public void initialize() {
 
-		//Initialisation des listes:
+		// Initialisation des listes:
 		_listeModulesClickable = new ArrayList<BidibulModule>();
-		_listeModulesDroppable = new ArrayList<BidibulModule>();
-		// Vérif
-		//VerifList("_listModules", _listeModules); // @todo JA a desactivé pour cause de crash complet
 
-		this.setSize(640, 480);
+		// Vérif
+		VerifList("_listModules", _listeModules); // @todo JA a desactivé pour cause de crash complet
+
+		this.setLocation(100, 100);
+		this.setSize(550, 600);
 		this.setLayout(null);
 
-		/**try {
-	        System.setProperty("sun.java2d.noddraw", "true");
-	        UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-	    }
-	    catch(Exception e) {
-	    }
-	    System.out.println("alpha ? " + WindowUtils.isWindowAlphaSupported());
-		WindowUtils.setWindowAlpha(this, .5f);*/
-
-	//--CREATION DU BIDIBUL
+		// --CREATION DU BIDIBUL
 		// @todo Séparer la classe pour plus de modularité
 		_bidibul = new BidibulPanel(this);
-		_bidibul.setBounds(200, 200, 300, 300);
+		_bidibul.setBounds(100, 200, 300, 300);
 		_bidibul.addMouseListener(new actionOnClic());
 		this.add(_bidibul);
 
-		//System.out.println("Bidibul is in " + _bidibul.getParent());
-	//-- Fin création bidibul
+		// -- Fin création bidibul
+
 
 		// NotificationPanel
 		FlashPanel panFlash = new FlashPanel(Flash.getInstance());
 		panFlash.setPreferredSize(this.getMaximumSize());
-		panFlash.setBounds(200, 50, 311, 133);
+		panFlash.setBounds(200, 0, 311, 133);
 		this.add(panFlash);
 
 		// PieMenuPanel
 		_pieMenuPanel = new PieMenuPanel (MainFrame.this, _bidibul.getX()+ _bidibul.getWidth()/2, _bidibul.getY()+ _bidibul.getHeight()/2 );
+		_pieMenuPanel.setBounds(0, 0 , 10000, 10000);
+		this.add(_pieMenuPanel);
 
-
-		//Analyse des listes (clickable)
-		//MiseAJourListeModules(true, null); // @todo JA a desactivé pour cause de crash complet
-		//VerifList("_listModulesClickable", _listeModulesClickable); // @todo JA a desactivé pour cause de crash complet
+		// Analyse des listes (clickable)
+		updateClickableModules();
+		VerifList("_listModulesClickable", _listeModulesClickable);
 
 		// Création du menu contextuel
 		this._bibidulPopupMenu = new BidibulPopupMenu(this);
 
 		// Ajout du listener de menu contextuel
+
+		this._bidibul.setTransferHandler(new MyFileTransferHandler(
+				_pieMenuPanel, _listeModules));
+
 	    this._bidibul.addMouseListener(new PopupMenuListener());
 
 	    // new ModuleManagerFrame(); // @todo DEV Jérémie ASTORI
+
 
 
 	}
@@ -141,9 +138,10 @@ public class MainFrame extends TranslucentFrame implements WindowListener {
 			// Clic gauche
 			if (e.getButton() == MouseEvent.BUTTON1) {
 				if (_pieMenuPanel.getIconVisible() == false) {
-					_pieMenuPanel.refresh(_listeModulesClickable);
+					_pieMenuPanel.refresh(_listeModulesClickable, 1);
 					_pieMenuPanel.setIconVisible(true);				//Affiche le PieMenu
 					MainFrame.this.update(MainFrame.this.getGraphics());
+					//MainFrame.this.repaint();
 					System.out.println("click show!");
 				}
 				else {
@@ -156,12 +154,23 @@ public class MainFrame extends TranslucentFrame implements WindowListener {
 	}
 
 	class PopupMenuListener extends MouseAdapter { // Menu contextuel au clic droit
+	//	@Override
+/*<<<<<<< .mine
+		public void mouseReleased(MouseEvent e) { // Menu contextuel au clic
+			// droit
+			if (e.getButton() == MouseEvent.BUTTON3) {
+				MainFrame.this._rightClickMenu.show(e.getComponent(), e.getX(),
+						e.getY());
+			}
+		}
+=======*/
 		@Override
 		public void mousePressed(MouseEvent e) {
 			if (e.isPopupTrigger()) {
 	            _bibidulPopupMenu.show(e.getComponent(), e.getX(), e.getY());
 	        }
 	    }
+//>>>>>>> .r23
 
 		@Override
 		public void mouseReleased(MouseEvent e) {
@@ -174,13 +183,13 @@ public class MainFrame extends TranslucentFrame implements WindowListener {
 	/**
 	 * Fonction destinée à disparaître: permet de vérifier la validité des
 	 * construction de List pour les modules
+	 *
 	 * @author Miro
 	 * @return
 	 */
 	void VerifList(String nomListe, ArrayList<BidibulModule> maListTemp) {
 		System.out.println("vérification de la liste '" + nomListe + "' : ");
-		if(!maListTemp.isEmpty())
-		{
+		if (!maListTemp.isEmpty()) {
 			Iterator<BidibulModule> i = maListTemp.listIterator();
 			while (i.hasNext()) {
 				System.out.println("     - " + i.next().getName());
@@ -189,35 +198,32 @@ public class MainFrame extends TranslucentFrame implements WindowListener {
 	}
 
 	/**
-	 * Construit l'ensemble des listes de modules nécessaires (générale, clickable, droppable)
-	 * @param miseAJourClickable un boolean représentant si la liste des modules clickable doit être mise à jour
-	 * @param tabDraggableExtension tableau des extensions à anaysé pour la mise à jour des modules droppable.
-	 * 								Si ce paramètre est nul, la liste des modules droppable n'est pas mise à jour
+	 * Construit l'ensemble des listes de modules nécessaires (générale,
+	 * clickable, droppable)
 	 */
-	public void MiseAJourListeModules(boolean miseAjourClickable, String tabDroppableExtension[]) {
-		//Mise à jour des modclickable
-		if (miseAjourClickable) {
-			Iterator<BidibulModule> i = _listeModules.listIterator();
-			BidibulModule tempMod;
-			while (i.hasNext()){
-				tempMod = i.next();
-				if (extends_iClickable(tempMod))
-					_listeModulesClickable.add(tempMod);
-			}
+	public void updateClickableModules() {
+		// Mise à jour des modclickable
+		Iterator<BidibulModule> i = _listeModules.listIterator();
+		BidibulModule tempMod;
+		while (i.hasNext()) {
+			tempMod = i.next();
+			if (extends_iClickable(tempMod))
+				_listeModulesClickable.add(tempMod);
 		}
-	}
 
+	}
 
 	/**
 	 * Renvoie true si la classe le module hérite de la classe iClickable
+	 *
 	 * @see BidibulModule
 	 * @see ModuleLoader#loadModules()
 	 * @todo Pourquoi ne pas utiliser instanceof à  la place ?
 	 * @todo Mieux que "Class<?>" ?
 	 */
-	private boolean extends_iClickable(BidibulModule mod){
+	private boolean extends_iClickable(BidibulModule mod) {
 		Class<?>[] interfaces = mod.getClass().getInterfaces();
-		for (int i=0; i<interfaces.length;i++){
+		for (int i = 0; i < interfaces.length; i++) {
 			System.out.println("interface :" + interfaces[i].getName());
 
 			if (interfaces[i].getName() == "utils.iClickable")
@@ -226,14 +232,18 @@ public class MainFrame extends TranslucentFrame implements WindowListener {
 		return false;
 	}
 
-	@Override
-	public void windowActivated(WindowEvent arg0) {}
 
 	@Override
-	public void windowClosed(WindowEvent arg0) {}
+	public void windowActivated(WindowEvent arg0) {
+	}
+
+	@Override
+	public void windowClosed(WindowEvent arg0) {
+	}
 
 	/**
 	 * Surcharge la fermeture de la fenêtre pour la personnaliser
+	 *
 	 * @see RightClickMenu#exit()
 	 */
 	@Override
@@ -242,14 +252,18 @@ public class MainFrame extends TranslucentFrame implements WindowListener {
 	}
 
 	@Override
-	public void windowDeactivated(WindowEvent arg0) {}
+	public void windowDeactivated(WindowEvent arg0) {
+	}
 
 	@Override
-	public void windowDeiconified(WindowEvent arg0) {}
+	public void windowDeiconified(WindowEvent arg0) {
+	}
 
 	@Override
-	public void windowIconified(WindowEvent arg0) {}
+	public void windowIconified(WindowEvent arg0) {
+	}
 
 	@Override
-	public void windowOpened(WindowEvent arg0) {}
+	public void windowOpened(WindowEvent arg0) {
+	}
 }

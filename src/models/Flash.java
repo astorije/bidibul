@@ -12,7 +12,7 @@ import utils.BidibulModule;
  * @author Jérémie ASTORI
  */
 public class Flash extends AbstractModel implements Observer {
-	private static Flash _instance;
+	private static Flash _instance = null;
 	private final ArrayList<FlashMessage> _flashMessages;
 
 	private Flash() {
@@ -45,6 +45,7 @@ public class Flash extends AbstractModel implements Observer {
 	public static Flash getInstance() {
 		if(Flash._instance == null)
 			Flash._instance = new Flash();
+
 		return Flash._instance;
 	}
 
