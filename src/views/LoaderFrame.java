@@ -64,7 +64,7 @@ public class LoaderFrame extends JFrame {
 	public List<BidibulModule> ChargerModule() {
 		if (ModuleLoader.getInstance().loadModules())
 		{
-			List<BidibulModule> modules = ModuleLoader.getInstance().getListModules();
+			List<BidibulModule> modules = ModuleLoader.getInstance().getListActiveModules();
 			return modules;
 		}
 		else

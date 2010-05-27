@@ -32,6 +32,12 @@ public class Main {
 			}
 		}
 */
-	}
+/*		Set<Class<BidibulModule>> s = ModuleLoader.getInstance().getSetAllModules();
+		Iterator<Class<BidibulModule>> i = s.iterator();
+		while(i.hasNext()) {
+			Class<BidibulModule> c = i.next();
+			System.out.println("name : "+ BidibulInformation.get("name", c) + " description : " + BidibulInformation.get("description", c));
+		}
+*/	}
 
 }

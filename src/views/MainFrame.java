@@ -10,6 +10,7 @@ import java.util.Iterator;
 import javax.swing.WindowConstants;
 
 import models.Flash;
+import tools.BidibulInformation;
 import tools.ModuleLoader;
 import tools.MyFileTransferHandler;
 import tools.TranslucentFrame;
@@ -192,7 +193,7 @@ public class MainFrame extends TranslucentFrame implements WindowListener {
 		if (!maListTemp.isEmpty()) {
 			Iterator<BidibulModule> i = maListTemp.listIterator();
 			while (i.hasNext()) {
-				System.out.println("     - " + i.next().getName());
+				System.out.println("     - " + BidibulInformation.get("name", i.next())/*i.next().getName()*/);
 			}
 		}
 	}

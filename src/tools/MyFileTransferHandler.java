@@ -232,7 +232,7 @@ public class MyFileTransferHandler extends TransferHandler {
 		if (!maListTemp.isEmpty()) {
 			Iterator<BidibulModule> i = maListTemp.listIterator();
 			while (i.hasNext()) {
-				System.out.println("     - " + i.next().getName());
+				System.out.println("     - " + BidibulInformation.get("name", i.next())/*i.next().getName()*/);
 			}
 		}
 	}

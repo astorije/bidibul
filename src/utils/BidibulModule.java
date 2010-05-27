@@ -47,19 +47,6 @@ abstract public class BidibulModule extends Observable {
 	}
 
 	/**
-	 * Renvoie le nom du module. Ce nom est utilisé par le RotorMenu.
-	 * @return Le nom du module
-	 */
-	abstract public String getName();
-
-	/**
-	 * Renvoie la description du module.
-	 * Est utilisé par le gestionnaire de module.
-	 * @return La description du module
-	 */
-	abstract public String getDescription();
-
-	/**
 	 * Effectue une action au chargement en surcharge du constructeur
 	 */
 	abstract public void onLoad();

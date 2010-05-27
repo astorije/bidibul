@@ -7,8 +7,10 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
-import java.util.Observable;
+import java.util.Set;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
@@ -18,34 +20,28 @@ import utils.BidibulModule;
 /**
  * Classe de chargement des modules. Le ModuleLoader est un singleton.
  * @author Nicolas B.
- * @todo Gérer les modules activés/desactivés
  */
 public class ModuleLoader {
 	 /**
      * L'instance du ModuleLoader.
      * @see ModuleLoader#getInstance()
      */
-	private static ModuleLoader instance;
+	private static ModuleLoader _instance;
 
-	/**
-     * La liste qui contient une instance de chaque module.
-     * @see ModuleLoader#loadModules()
-     * @see ModuleLoader#getListModules()
-     */
-	private List<BidibulModule> listModule;
+	private HashMap<Class<BidibulModule>, BidibulModule> _m;
 
 	/**
      * Le nom du dossier où sont stockés les .class des modules.
      * @see ModuleLoader#loadModules()
      */
-	private static String moduleDir = "modules";
+	private final String moduleDir = "modules";
 
 	/**
 	 * Constructeur privé.
 	 * @see ModuleLoader#getInstance()
 	 */
 	private ModuleLoader() {
-		listModule = new ArrayList<BidibulModule>();
+		_m = new HashMap<Class<BidibulModule>, BidibulModule>();
 	}
 
 	/**
@@ -53,10 +49,10 @@ public class ModuleLoader {
 	 * @return ModuleLoader
 	 */
 	public static ModuleLoader getInstance() {
-        if (null == instance) {
-            instance = new ModuleLoader();
+        if (null == _instance) {
+        	_instance = new ModuleLoader();
         }
-        return instance;
+        return _instance;
     }
 
 	/**
@@ -64,8 +60,24 @@ public class ModuleLoader {
 	 * @return List<BidibulModule> null si aucun module chargé
 	 * @see ModuleLoader#loadModules()
 	 */
-	public List<BidibulModule> getListModules(){
-		return listModule;
+	public List<BidibulModule> getListActiveModules(){
+		List<BidibulModule> l = new ArrayList<BidibulModule>();
+		Iterator<Class<BidibulModule>> i = _m.keySet().iterator();
+		while(i.hasNext()) {
+			BidibulModule m = _m.get(i.next());
+			if (m != null)
+				l.add(m);
+		}
+		return l;
+	}
+
+	/**
+	 * Retourne un Set de toutes les classes des modules.
+	 * @return Set<Class<BidibulModule>> null si aucun module chargé
+	 * @see ModuleLoader#loadModules()
+	 */
+	public Set<Class<BidibulModule>> getSetAllModules(){
+		return _m.keySet();
 	}
 
 	/**
@@ -78,7 +90,7 @@ public class ModuleLoader {
 
 		if (jarName != null){
 			Enumeration<JarEntry> jarFiles;
-			listModule.clear();
+			_m.clear();
 			for (int i=0; i<jarName.length; i++){
 				// Prépare le ClassLoader
 				URLClassLoader loader=null;
@@ -114,17 +126,12 @@ public class ModuleLoader {
 
 							// Vérifie que la classe est un BidibulModule
 							if (extends_BidibulModule(externalClass) ) {
-								Object externalObject = externalClass.newInstance();
-								((Observable)externalObject).addObserver(Flash.getInstance());
-								listModule.add((BidibulModule) externalObject);
+								startModule((Class<BidibulModule>) externalClass);
+								BidibulInformation.add((Class<BidibulModule>) externalClass);
 								System.out.println("BidibulModule loaded: " + externalClass.getCanonicalName());
 							}
 						}
 						catch (ClassNotFoundException e) {
-							e.printStackTrace(); return false;
-						} catch (InstantiationException e) {
-							e.printStackTrace(); return false;
-						} catch (IllegalAccessException e) {
 							e.printStackTrace(); return false;
 						}
 					}
@@ -157,7 +164,6 @@ public class ModuleLoader {
 	 * Renvoie true si la classe hérite de la classe BidibulModule
 	 * @see BidibulModule
 	 * @see ModuleLoader#loadModules()
-	 * @todo Mieux que "Class<?>" ?
 	 */
 	private boolean extends_BidibulModule(Class<?> c){
 		Class<?> superclass = c.getSuperclass();
@@ -167,6 +173,24 @@ public class ModuleLoader {
 		else {
 			System.out.println("pas BidibulModule :" + superclass.getName());
 			return false;
+		}
+	}
+
+	public void stopModule(Class<BidibulModule> c){
+		if (_m.containsKey(c)) {
+			_m.put(c, null);
+		}
+	}
+
+	public void startModule(Class<BidibulModule> c){
+		try {
+			BidibulModule m  = c.newInstance();
+			_m.put(c, m);
+			m.addObserver(Flash.getInstance());
+		} catch (InstantiationException e) {
+			e.printStackTrace();
+		} catch (IllegalAccessException e) {
+			e.printStackTrace();
 		}
 	}
 }
