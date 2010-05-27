@@ -22,22 +22,18 @@ public class Main {
 		//new PieMenuPanel (null, 100 + 100,200+ 100 );
 		//this.add(_pieMenuPanel);
 /*
-		ModuleLoader.getInstance().loadModules();
-		List<BidibulModule> modules = ModuleLoader.getInstance().getListModules();
-		if(!modules.isEmpty())
-		{
-			Iterator<BidibulModule> i = modules.listIterator();
-			while (i.hasNext()){
-				System.out.println(i.next().getName());
-			}
-		}
-*/
-/*		Set<Class<BidibulModule>> s = ModuleLoader.getInstance().getSetAllModules();
+		Set<Class<BidibulModule>> s = ModuleLoader.getInstance().getSetAllModules();
 		Iterator<Class<BidibulModule>> i = s.iterator();
+		Class<BidibulModule> y=null;
 		while(i.hasNext()) {
 			Class<BidibulModule> c = i.next();
-			System.out.println("name : "+ BidibulInformation.get("name", c) + " description : " + BidibulInformation.get("description", c));
+			if (BidibulInformation.get("name", c).equals("yep"))
+				y = c;
+			System.out.println("name : "+ BidibulInformation.get("name", c) + " description : " + BidibulInformation.get("description", c) + " actif : "  + ModuleLoader.getInstance().isActive(c));
 		}
+		ModuleLoader.getInstance().stopModule(y);
+		System.out.println("name : "+ BidibulInformation.get("name", y) + " description : " + BidibulInformation.get("description", y) + " est actif : "  + ModuleLoader.getInstance().isActive(y));
+		ModuleLoader.getInstance().startModule(y);
+		System.out.println("name : "+ BidibulInformation.get("name", y) + " description : " + BidibulInformation.get("description", y) + " est actif : "  + ModuleLoader.getInstance().isActive(y));
 */	}
-
 }

@@ -126,9 +126,16 @@ public class ModuleLoader {
 
 							// Vérifie que la classe est un BidibulModule
 							if (extends_BidibulModule(externalClass) ) {
-								startModule((Class<BidibulModule>) externalClass);
-								BidibulInformation.add((Class<BidibulModule>) externalClass);
-								System.out.println("BidibulModule loaded: " + externalClass.getCanonicalName());
+								Class<BidibulModule> c  = (Class<BidibulModule>) externalClass;
+								BidibulInformation.add(c);
+								BidibulProperties p = new BidibulProperties("global");
+								if (p.get(c.getCanonicalName()) != null && p.get(c.getCanonicalName()).equals("0")) {
+									_m.put(c, null);
+									System.out.println("BidibulModule inactif: " + externalClass.getCanonicalName());
+								} else {
+									startModule(c);
+									System.out.println("BidibulModule actif : " + externalClass.getCanonicalName());
+								}
 							}
 						}
 						catch (ClassNotFoundException e) {
@@ -179,6 +186,11 @@ public class ModuleLoader {
 	public void stopModule(Class<BidibulModule> c){
 		if (_m.containsKey(c)) {
 			_m.put(c, null);
+			System.out.println("Arrêt module : " + BidibulInformation.get("name", c));
+			// Sauvegarde
+			BidibulProperties p = new BidibulProperties("global");
+			p.put(c.getCanonicalName(), "0");
+			p.save();
 		}
 	}
 
@@ -187,10 +199,21 @@ public class ModuleLoader {
 			BidibulModule m  = c.newInstance();
 			_m.put(c, m);
 			m.addObserver(Flash.getInstance());
+			System.out.println("Démarrage module : " + BidibulInformation.get("name", c));
+			// Sauvegarde
+			BidibulProperties p = new BidibulProperties("global");
+			p.put(c.getCanonicalName(), "1");
+			p.save();
 		} catch (InstantiationException e) {
 			e.printStackTrace();
 		} catch (IllegalAccessException e) {
 			e.printStackTrace();
 		}
+	}
+
+	public boolean isActive(Class<BidibulModule> c){
+		if (_m.get(c) != null)
+			return true;
+		return false;
 	}
 }
