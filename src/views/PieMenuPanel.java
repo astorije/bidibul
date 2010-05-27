@@ -9,6 +9,7 @@ import java.util.Hashtable;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
+import models.Flash;
 import utils.BidibulModule;
 import utils.iClickable;
 import utils.iDroppable;
@@ -19,6 +20,10 @@ import utils.iDroppable;
  * @author Miroslav
  */
 public class PieMenuPanel extends JPanel {
+	/**
+	 *
+	 */
+	private static final long serialVersionUID = 1L;
 	private Hashtable<String, JLabel> icons;
 	private Hashtable<String, BidibulModule> modules;
 	private Container _container;
@@ -138,6 +143,11 @@ public class PieMenuPanel extends JPanel {
 				/*String tooltip = ((iClickable) modules.get("icon" + numIcon)).getClickTooltip();
 				Flash.notice(tooltip);*/
 			}
+			if (mode ==2)
+			{
+				String tooltip = ((iDroppable) modules.get("icon" + numIcon)).getDropTooltip();
+				Flash.notice(tooltip);
+			}
 		}
 		@Override
 		public void mouseReleased(MouseEvent e)						//sur clic de la souris
@@ -148,10 +158,15 @@ public class PieMenuPanel extends JPanel {
 				// Cas du click
 				if (mode == 1)
 				{
+					setIconVisible(false);			//Cache le PieMenu
+					_container.update(_container.getGraphics());
+					System.out.println("click hide!");
 					((iClickable) modules.get("icon" + numIcon)).click();
 				}
 				if (mode == 2)
 				{
+					setIconVisible(false);			//Cache le PieMenu
+					_container.update(_container.getGraphics());
 					((iDroppable) modules.get("icon" + numIcon)).drop(_listeFichier);
 				}
 			}

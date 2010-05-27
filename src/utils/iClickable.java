@@ -6,6 +6,7 @@ import javax.swing.ImageIcon;
 /**
  * Interface pour les modules devant réagir au clic sur le menu
  * @author Jérémie ASTORI
+ * @author Dominique CLAUSE
  */
 public interface iClickable {
 

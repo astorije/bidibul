@@ -20,6 +20,10 @@ import utils.iDroppable;
 import views.PieMenuPanel;
 
 public class MyFileTransferHandler extends TransferHandler {
+	/**
+	 *
+	 */
+	private static final long serialVersionUID = 1L;
 	private PieMenuPanel _piePanel;
 	private ArrayList<BidibulModule> _listeModules;
 	private ArrayList<BidibulModule> _listeModulesDroppable;

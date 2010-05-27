@@ -8,6 +8,7 @@ import javax.swing.ImageIcon;
 /**
  * Interface pour les modules devant réagir au drop d'un fichier sur le Bidibul
  * @author Jérémie ASTORI
+ * @author Dominique CLAUSE
  */
 public interface iDroppable {
 	/**
