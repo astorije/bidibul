@@ -1,5 +1,13 @@
 package views;
 
+import java.awt.Image;
+import java.awt.MenuItem;
+import java.awt.PopupMenu;
+import java.awt.SystemTray;
+import java.awt.Toolkit;
+import java.awt.TrayIcon;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowEvent;
@@ -17,6 +25,7 @@ import tools.TranslucentFrame;
 import utils.BidibulModule;
 
 // @todo kill me
+// @todo love me
 
 /**
  * Frame principale du programme.
@@ -32,6 +41,8 @@ public class MainFrame extends TranslucentFrame implements WindowListener {
 	private PieMenuPanel _pieMenuPanel = null;
 	private BidibulPopupMenu _bibidulPopupMenu;
 	private ArrayList<BidibulModule> _listeModules, _listeModulesClickable;
+	private SystemTray _tray = null;
+	private TrayIcon _trayIcon = null;
 
 	/**
 	 * CONSTRUCTEUR
@@ -40,6 +51,7 @@ public class MainFrame extends TranslucentFrame implements WindowListener {
 		_listeModules = new ArrayList<BidibulModule>(listModuleTemp);
 		this.output();
 		this.initialize();
+		this.initSystray();
 		// ---
 		// Surcharge du constructeur. Lance la fonction onLoad des modules:
 		// cette fonction permet la surcharge éventuelle du constructeur
@@ -59,6 +71,7 @@ public class MainFrame extends TranslucentFrame implements WindowListener {
 	public MainFrame() {
 		this.output();
 		this.initialize();
+		this.initSystray();
 	}
 
 	/**
@@ -155,23 +168,13 @@ public class MainFrame extends TranslucentFrame implements WindowListener {
 	}
 
 	class PopupMenuListener extends MouseAdapter { // Menu contextuel au clic droit
-	//	@Override
-/*<<<<<<< .mine
-		public void mouseReleased(MouseEvent e) { // Menu contextuel au clic
-			// droit
-			if (e.getButton() == MouseEvent.BUTTON3) {
-				MainFrame.this._rightClickMenu.show(e.getComponent(), e.getX(),
-						e.getY());
-			}
-		}
-=======*/
+
 		@Override
 		public void mousePressed(MouseEvent e) {
 			if (e.isPopupTrigger()) {
 	            _bibidulPopupMenu.show(e.getComponent(), e.getX(), e.getY());
 	        }
 	    }
-//>>>>>>> .r23
 
 		@Override
 		public void mouseReleased(MouseEvent e) {
@@ -233,6 +236,57 @@ public class MainFrame extends TranslucentFrame implements WindowListener {
 		return false;
 	}
 
+
+	public void initSystray() {
+	     if (SystemTray.isSupported()) {
+	         //Crée une instance de systray
+	         _tray = SystemTray.getSystemTray();
+	         // Charger l'image du bidibul dans le systray
+	         Image image = Toolkit.getDefaultToolkit().getImage("img/bidibul_tray.png");
+
+	         //Réctive le bidibul
+	         ActionListener listener = new ActionListener() {
+	             public void actionPerformed(ActionEvent e) {
+	                 setVisible(true);
+	                 _tray.remove(_trayIcon);
+	             }
+	         };
+	         // Quitte l'application
+	         ActionListener quit = new ActionListener() {
+	             public void actionPerformed(ActionEvent e) {
+	                 setVisible(true);
+	                 _tray.remove(_trayIcon);
+	                 BidibulPopupMenu.exit();
+	             }
+	         };
+	         // Créer un popup menu sur le l'icone du Systray:
+	         PopupMenu popup = new PopupMenu();
+	         // Créer un menu:
+	         MenuItem quitItem = new MenuItem("Fermer le bidibul!");
+	         MenuItem showItem = new MenuItem("Montrer le Bidibul!");
+	         quitItem.addActionListener(quit);
+	         showItem.addActionListener(listener);
+	         popup.add(showItem);
+	         popup.addSeparator();
+	         popup.add(quitItem);
+
+	         _trayIcon = new TrayIcon(image, "Double-clic pour faire apparaître le bidibul!", popup);
+	         _trayIcon.setImageAutoSize(true);
+	          //Double-clic sur l'icone: montre le bidibul
+	         _trayIcon.addActionListener(listener);
+
+	     } else {
+	    	 System.out.println("systray refusé");
+	     }
+	}
+
+	public SystemTray getSystemTray() {
+		return this._tray;
+	}
+
+	public TrayIcon getTrayIcon() {
+		return this._trayIcon;
+	}
 
 	@Override
 	public void windowActivated(WindowEvent arg0) {

@@ -1,5 +1,7 @@
 package views;
 
+import java.awt.AWTException;
+import java.awt.TrayIcon;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
@@ -7,7 +9,6 @@ import java.awt.event.ItemListener;
 import java.awt.event.KeyEvent;
 
 import javax.swing.JCheckBoxMenuItem;
-import javax.swing.JFrame;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.KeyStroke;
@@ -23,13 +24,14 @@ public class BidibulPopupMenu extends JPopupMenu implements ActionListener,
 															ItemListener {
 	private static final long serialVersionUID = 1L;
 
-	private JFrame _frame;
+	private MainFrame _frame;
 
 	private static final String MODULE_MANAGEMENT = "Activer/Désactiver un module";
 	private static final String ALWAYS_ON_TOP = "Toujours au premier plan";
+	private static final String BIDIBUL_HIDE = "Cacher le bidibul";
 	private static final String EXIT = "Quitter Bidibul";
 
-	public BidibulPopupMenu(JFrame frame) {
+	public BidibulPopupMenu(MainFrame frame) {
 	    super();
 
 	    this._frame = frame;
@@ -45,6 +47,14 @@ public class BidibulPopupMenu extends JPopupMenu implements ActionListener,
 	    itmAlwaysOnTop.setMnemonic(KeyEvent.VK_T);
 	    itmAlwaysOnTop.addItemListener(this);
 	    this.add(itmAlwaysOnTop);
+
+	    this.addSeparator();
+
+	    // Place le bidibul dans le systray
+	    JMenuItem itmHideBidibul = new JMenuItem(BIDIBUL_HIDE);
+	    itmHideBidibul.setMnemonic(KeyEvent.VK_H);
+	    itmHideBidibul.addActionListener(this);
+	    this.add(itmHideBidibul);
 
 	    this.addSeparator();
 
@@ -86,8 +96,22 @@ public class BidibulPopupMenu extends JPopupMenu implements ActionListener,
 			System.out.println(MODULE_MANAGEMENT);
 			new ModuleManagerFrame();
 		}
-		else if(source.getText() == EXIT)
+		else if(source.getText() == EXIT) {
 			exit();
+		}
+		//Cas du systray
+		else if (source.getText() == BIDIBUL_HIDE) {
+			try {
+	             this._frame.getSystemTray().add(this._frame.getTrayIcon());
+	             this._frame.getTrayIcon().displayMessage("Bidibul", "Ton bidibul à été caché. Double-clic sur cette icone lorsque tu voudras le faire réapparaitre!", TrayIcon.MessageType.INFO);
+	             //int state = this._frame.getExtendedState(); // get the current state
+	             //state = state & this._frame.ICONIFIED;
+	             this._frame.setVisible(false);
+	         } catch (AWTException e1) {
+	        	 System.out.println("no");
+	             System.err.println(e1);
+	         }
+		}
     }
 
 	@Override

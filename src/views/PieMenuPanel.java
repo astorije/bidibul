@@ -9,7 +9,6 @@ import java.util.Hashtable;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-import models.Flash;
 import utils.BidibulModule;
 import utils.iClickable;
 import utils.iDroppable;
@@ -35,7 +34,7 @@ public class PieMenuPanel extends JPanel {
 	double thetaAngle;
 	double pi = 3.1416;
 	int sizeRotor = 200;
-	int iconSize = 70;
+	private static int _ICONSIZE = 100;
 	Boolean iconVisible = false;
 	String[] _listeFichier;
 
@@ -113,7 +112,7 @@ public class PieMenuPanel extends JPanel {
 				System.out.println(((iDroppable) listeAffichage.get(i-1)).getDropIcon().toString());
 			}
 			modules.put("icon" + i, listeAffichage.get(i-1));
-			icons.get("icon" + i).setBounds(Xprim+_posX - iconSize/2, Yprim+_posY- iconSize/2, iconSize, iconSize);
+			icons.get("icon" + i).setBounds(Xprim+_posX - _ICONSIZE/2, Yprim+_posY- _ICONSIZE/2, _ICONSIZE, _ICONSIZE);
 			icons.get("icon" + i).setVisible(true);
 			icons.get("icon" + i).addMouseListener(new actionOnClic(i, mode));
 			Xprim = (int) (X * Math.cos(theta) - Y * Math.sin(theta));
@@ -145,8 +144,8 @@ public class PieMenuPanel extends JPanel {
 			}
 			if (mode ==2)
 			{
-				String tooltip = ((iDroppable) modules.get("icon" + numIcon)).getDropTooltip();
-				Flash.notice(tooltip);
+				/*String tooltip = ((iDroppable) modules.get("icon" + numIcon)).getDropTooltip();
+				Flash.notice(tooltip);*/
 			}
 		}
 		@Override
