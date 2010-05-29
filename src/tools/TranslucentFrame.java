@@ -20,15 +20,11 @@ import com.sun.jna.platform.WindowUtils;
 
 
 public class TranslucentFrame extends JFrame {
-
-	/**
-	 *
-	 */
 	private static final long serialVersionUID = 1L;
 
-
 	private float alpha = 1.0f;
-	private Boolean undecorated = true;
+	private Boolean undecorated = true; // @todo PROD
+	//private Boolean undecorated = false; // @todo DEV
 	private Boolean windowTransparent = true;
 
 

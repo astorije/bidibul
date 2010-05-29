@@ -19,11 +19,25 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.TableColumnModel;
 
+// FIXME Ouverture de fenêtre multiple
 public class ModuleManagerFrame extends JFrame {
 	private static final long serialVersionUID = 1L;
 	private JButton _btnAbout;
 	private ListSelectionModel _selectionModelTable;
+/*
+  // @todo Tentative d'ouverture multiple d'une même fenêtre... fail!
+	private static ModuleManagerFrame _instance;
 
+	public static ModuleManagerFrame getInstance() {
+		if(_instance == null)
+			_instance = new ModuleManagerFrame();
+		else {
+			_instance.setAlwaysOnTop(true);
+			_instance.setAlwaysOnTop(false);
+		}
+		return _instance;
+	}
+*/
 	public ModuleManagerFrame() {
 		super("Bidibul - Gestion des modules");
 

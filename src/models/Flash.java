@@ -42,6 +42,14 @@ public class Flash extends AbstractModel implements Observer {
 		this.setFlashMessage("error", msg);
 	}
 
+	public static void rollback() {
+		if (!getInstance()._flashMessages.isEmpty()) {
+			getInstance()._flashMessages.remove(getInstance()._flashMessages.size()-1);
+			getInstance().setChanged();
+			getInstance().notifyObservers();
+		}
+	}
+
 	public static Flash getInstance() {
 		if(Flash._instance == null)
 			Flash._instance = new Flash();
@@ -50,8 +58,8 @@ public class Flash extends AbstractModel implements Observer {
 	}
 
 	public FlashMessage getLastFlashMessage() {
-		if (!this._flashMessages.isEmpty())
-			return this._flashMessages.get(this._flashMessages.size()-1);
+		if (!_flashMessages.isEmpty())
+			return _flashMessages.get(this._flashMessages.size()-1);
 		else return null;
 	}
 

@@ -91,11 +91,9 @@ public class BidibulPopupMenu extends JPopupMenu implements ActionListener,
 	@Override
     public void actionPerformed(ActionEvent e) {
 		JMenuItem source = (JMenuItem)(e.getSource());
-		if(source.getText() == MODULE_MANAGEMENT) {
-			// @todo : menu des modules
-			System.out.println(MODULE_MANAGEMENT);
+		if(source.getText() == MODULE_MANAGEMENT)
+			// @todo ModuleManagerFrame.getInstance();
 			new ModuleManagerFrame();
-		}
 		else if(source.getText() == EXIT) {
 			exit();
 		}

@@ -9,6 +9,7 @@ import java.util.Hashtable;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
+import models.Flash;
 import utils.BidibulModule;
 import utils.iClickable;
 import utils.iDroppable;
@@ -28,12 +29,12 @@ public class PieMenuPanel extends JPanel {
 	private Container _container;
 	private int _posX=0;
 	private int _posY = 0;
-	int widthDock = 500;
-	int heightDock = 500;
+	int widthDock = 300;
+	int heightDock = 300;
 	int nbreIcons = 0;
 	double thetaAngle;
 	double pi = 3.1416;
-	int sizeRotor = 200;
+	int sizeRotor = 100;
 	private static int _ICONSIZE = 100;
 	Boolean iconVisible = false;
 	String[] _listeFichier;
@@ -45,14 +46,16 @@ public class PieMenuPanel extends JPanel {
 	 * @param PosY
 	 */
 	public PieMenuPanel(Container panelAff, int PosX, int PosY){//constructor
+		setLayout(null);
 		_container = panelAff;
 		//_listIcon = listIcon;
 		_posX = PosX;
 		_posY = PosY;
 		icons = new Hashtable<String, JLabel>();
 		modules = new Hashtable<String, BidibulModule>();
-		_container.update(_container.getGraphics());
-		this.setVisible(true);
+//		_container.update(_container.getGraphics());
+		setVisible(false);
+		setOpaque(false);
 	//	_listeFichier;
 	}
 	public Container getContainer() {
@@ -66,6 +69,7 @@ public class PieMenuPanel extends JPanel {
 	 * Rend le menu visible ou invisible
 	 * @param arg
 	 */
+	@Deprecated
 	public void setIconVisible(Boolean arg) { //affiche ou cache les icones du menu selon l'argument
 		for (int i=1; i<= nbreIcons; i++){
 			icons.get("icon" + i).setVisible(arg);
@@ -77,6 +81,7 @@ public class PieMenuPanel extends JPanel {
 	 * Vérifie si le menu est actuellement en cours d'affichage
 	 * @return
 	 */
+	@Deprecated
 	public Boolean getIconVisible() { //renvoie l'état d'affichage des icones
 		return this.iconVisible;
 	}
@@ -90,14 +95,15 @@ public class PieMenuPanel extends JPanel {
 	 * 		2: modules droppable
 	 */
 	public void refresh(ArrayList<BidibulModule> listeAffichage, int mode) {
-		System.out.println("rafraichissement demandé");
 		nbreIcons = listeAffichage.size();
+		System.out.println("rafraichissement demandé : "+nbreIcons+" icones");
 		thetaAngle = (2*pi/nbreIcons);
 		int X=0, Xprim =0;
 		int Y=sizeRotor, Yprim =sizeRotor;
 		double theta = thetaAngle;
 		int i;
 		icons.clear();
+		this.removeAll();
 		//	Création dynamique des icones
 		for (i=1;i<=nbreIcons; i++) {
 			//Cas Clickable
@@ -120,12 +126,13 @@ public class PieMenuPanel extends JPanel {
 			theta+=thetaAngle;
 			this.add(icons.get("icon" + i));
 		}
-		this.update(this.getGraphics());
+		//this.update(this.getGraphics());
 
 
 		//_container.update(_container.getGraphics());
 
 	}
+
 	public class actionOnClic extends MouseAdapter {
 		int numIcon;
 		int mode;
@@ -133,39 +140,56 @@ public class PieMenuPanel extends JPanel {
 			numIcon = num;
 			mode = iMode;
 		}
-		//Survole du module
+		// Entrée de survol du module
 		@Override
 		public void mouseEntered(MouseEvent e)
 		{
 			if (mode == 1)
 			{
-				/*String tooltip = ((iClickable) modules.get("icon" + numIcon)).getClickTooltip();
-				Flash.notice(tooltip);*/
+				String tooltip = ((iClickable) modules.get("icon" + numIcon)).getClickTooltip();
+				Flash.notice(tooltip);
 			}
 			if (mode ==2)
 			{
-				/*String tooltip = ((iDroppable) modules.get("icon" + numIcon)).getDropTooltip();
-				Flash.notice(tooltip);*/
+				//String tooltip = ((iDroppable) modules.get("icon" + numIcon)).getDropTooltip();
+				//Flash.notice(tooltip);
+			}
+		}
+
+		//Sortie de survol du module
+		@Override
+		public void mouseExited(MouseEvent e)
+		{
+			if (mode == 1)
+			{
+				String tooltip = ((iClickable) modules.get("icon" + numIcon)).getClickTooltip();
+				Flash.rollback();
+			}
+			if (mode ==2)
+			{
+				String tooltip = ((iDroppable) modules.get("icon" + numIcon)).getDropTooltip();
+				Flash.rollback();
 			}
 		}
 		@Override
 		public void mouseReleased(MouseEvent e)						//sur clic de la souris
 		{
-			/* -- clic gauche -- */
 			if (e.getButton() == MouseEvent.BUTTON1) 				//Si clic gauche
 			{
 				// Cas du click
 				if (mode == 1)
 				{
-					setIconVisible(false);			//Cache le PieMenu
-					_container.update(_container.getGraphics());
+					//setIconVisible(false);			//Cache le PieMenu
+					setVisible(false);			//Cache le PieMenu
+					//_container.update(_container.getGraphics());
 					System.out.println("click hide!");
 					((iClickable) modules.get("icon" + numIcon)).click();
 				}
 				if (mode == 2)
 				{
-					setIconVisible(false);			//Cache le PieMenu
-					_container.update(_container.getGraphics());
+					//setIconVisible(false);			//Cache le PieMenu
+					setVisible(false);			//Cache le PieMenu
+					//_container.update(_container.getGraphics());
 					((iDroppable) modules.get("icon" + numIcon)).drop(_listeFichier);
 				}
 			}

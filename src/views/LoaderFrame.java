@@ -1,5 +1,7 @@
 package views;
 
+import java.awt.Dimension;
+import java.awt.Toolkit;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -10,7 +12,7 @@ import javax.swing.JProgressBar;
 import tools.ModuleLoader;
 import utils.BidibulModule;
 
-/**
+/**pas
  * Cette frame permet simplement
  * @author Miroslav
  *
@@ -32,10 +34,9 @@ public class LoaderFrame extends JFrame {
 		progressBar.setBounds(10, 40, 100, 20);
 		this.getContentPane().add(progressBar);
 
-		java.awt.Dimension screenSize = java.awt.Toolkit.getDefaultToolkit().getScreenSize();
+		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 
-		this.setDefaultCloseOperation(javax.swing.JFrame.EXIT_ON_CLOSE);
-		this.pack();
+		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		this.setLocation(
 		        (screenSize.width-this.getWidth())/2,
 		        (screenSize.height-this.getHeight())/2

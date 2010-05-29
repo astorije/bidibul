@@ -75,6 +75,7 @@ public class ModuleLoader {
 	 * Retourne un Set de toutes les classes des modules.
 	 * @return Set<Class<BidibulModule>> null si aucun module chargé
 	 * @see ModuleLoader#loadModules()
+	 * @todo La liste n'arrive jamais dans le même ordre, pourquoi ??
 	 */
 	public Set<Class<BidibulModule>> getSetAllModules(){
 		return _m.keySet();
@@ -174,7 +175,7 @@ public class ModuleLoader {
 	 */
 	private boolean extends_BidibulModule(Class<?> c){
 		Class<?> superclass = c.getSuperclass();
-		System.out.println("pas BidibulModule :" + superclass.getName());
+		//System.out.println("pas BidibulModule :" + superclass.getName());
 		if (superclass.getName() == "utils.BidibulModule")
 				return true;
 		else {
@@ -212,6 +213,7 @@ public class ModuleLoader {
 	}
 
 	public boolean isActive(Class<BidibulModule> c){
+		_m.get(c);
 		if (_m.get(c) != null)
 			return true;
 		return false;

@@ -1,37 +1,66 @@
 package views;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+
 import javax.swing.table.AbstractTableModel;
+
+import tools.BidibulInformation;
+import tools.ModuleLoader;
+import utils.BidibulModule;
 
 class ModuleManagerTableModel extends AbstractTableModel {
 	private static final long serialVersionUID = 1L;
 
 	String[] columnNames = {"Actif","Module"};
 
-	Object[][] data = {
-		    {new Boolean(false), new String[] {"Module 1", "Description du module 1"}},
-		    {new Boolean(true), new String[] {"Module 2", "Description du module 2"}},
-		    {new Boolean(true), new String[] {"Module 2 bis", "Description du module 2"}},
-		    {new Boolean(false), new String[] {"Module 3", "Description du module 3"}},
-		};
+	ArrayList<Object[]> data = new ArrayList<Object[]>();
+
+	public ModuleManagerTableModel() {
+		Class<BidibulModule> module;
+
+		String module_name;
+		String module_description;
+		Boolean module_is_active;
+
+		Iterator<Class<BidibulModule>> it = ModuleLoader.getInstance().getSetAllModules().iterator();
+		while (it.hasNext()) {
+			module = it.next();
+
+			// @todo : Les champs par défaut sont amenés à disparaitre
+			// Au pire, ils doivent être affectés à la création
+			module_name = BidibulInformation.get("name", module);
+			if(module_name == null) module_name = "<Module sans nom>";
+			module_description = BidibulInformation.get("description", module);
+			if(module_description == null) module_description = "<Module sans description>";
+			module_is_active = ModuleLoader.getInstance().isActive(module);
+
+			if(module_name != null && module_description != null)
+				data.add(new Object[] {
+					new Boolean(module_is_active),
+					new String[] {module_name, module_description}
+				});
+		}
+	}
 
 	@Override
 	public int getColumnCount() {
-        return this.columnNames.length;
+        return columnNames.length;
 	}
 
 	@Override
 	public int getRowCount() {
-        return this.data.length;
+        return data.size();
 	}
 
 	@Override
 	public String getColumnName(int col) {
-        return this.columnNames[col];
+        return columnNames[col];
     }
 
 	@Override
     public Object getValueAt(int row, int col) {
-        return this.data[row][col];
+		return data.get(row)[col];
     }
 
     /**
@@ -39,7 +68,7 @@ class ModuleManagerTableModel extends AbstractTableModel {
      */
 	@Override
     public Class<?> getColumnClass(int c) {
-        return this.getValueAt(0, c).getClass();
+        return getValueAt(0, c).getClass();
     }
 
 	@Override
@@ -52,8 +81,12 @@ class ModuleManagerTableModel extends AbstractTableModel {
     @Override
 	public void setValueAt(Object value, int row, int col) {
 		if(col == 0) {
-			this.data[row][0] = value;
+			data.get(row)[0] = value;
 			System.out.println("Module " + row + " est maintenant activé ? " + value);
+
+		//	ModuleLoader.getInstance().getSetAllModules().
+
+	//		ModuleLoader.getInstance().startModule(c);
 		}
     }
 }

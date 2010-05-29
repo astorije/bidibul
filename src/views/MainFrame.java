@@ -24,9 +24,6 @@ import tools.MyFileTransferHandler;
 import tools.TranslucentFrame;
 import utils.BidibulModule;
 
-// @todo kill me
-// @todo love me
-
 /**
  * Frame principale du programme.
  * Appelée par le main.
@@ -49,9 +46,9 @@ public class MainFrame extends TranslucentFrame implements WindowListener {
 	 */
 	public MainFrame(ArrayList<BidibulModule> listModuleTemp) {
 		_listeModules = new ArrayList<BidibulModule>(listModuleTemp);
-		this.output();
-		this.initialize();
-		this.initSystray();
+		initialize();
+		output();
+		//initSystray(); // @todo A réactiver __PLUS TARD__, quand tout marchera à parfaitement
 		// ---
 		// Surcharge du constructeur. Lance la fonction onLoad des modules:
 		// cette fonction permet la surcharge éventuelle du constructeur
@@ -69,62 +66,62 @@ public class MainFrame extends TranslucentFrame implements WindowListener {
 	 * @todo Constructeur installé par dépit, rien d'autre ne marchant quand aucun module n'est présent...
 	 */
 	public MainFrame() {
-		this.output();
 		this.initialize();
-		this.initSystray();
+		this.output();
+//		this.initSystray();
 	}
 
 	/**
 	 * Définition des paramètres de fenêtrage
 	 */
 	public void output() {
-		// Ne rien faire à la fermeture ([X] ou Alt-F4) car on veut une
-		// fermeture personnalisée
-		this.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
+		// Ne rien faire à la fermeture ([X] ou Alt-F4) car on veut une fermeture personnalisée
+	    setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
 
-		// Surcharge les opérations de fenêtrage, comme la fermeture de
-		// l'application par exemple
-		this.addWindowListener(this);
+	    // Surcharge les opérations de fenêtrage, comme la fermeture de l'application par exemple
+	    addWindowListener(this);
 
-		this.setVisible(true);
-		this.pack();
+	    setVisible(true);
 	}
 
 	/**
 	 * Initialisation des composants et affichage
 	 */
 	public void initialize() {
-
 		// Initialisation des listes:
 		_listeModulesClickable = new ArrayList<BidibulModule>();
 
 		// Vérif
 		VerifList("_listModules", _listeModules); // @todo JA a desactivé pour cause de crash complet
 
-		this.setLocation(100, 100);
-		this.setSize(550, 600);
-		this.setLayout(null);
+		setLocation(100, 100);
+		setSize(331, 440);
+		setLayout(null);
 
 		// --CREATION DU BIDIBUL
-		// @todo Séparer la classe pour plus de modularité
 		_bidibul = new BidibulPanel(this);
-		_bidibul.setBounds(100, 200, 300, 300);
+		_bidibul.setBounds(
+				getWidth()/2 - _bidibul.getWidth()/2,
+				160,
+				_bidibul.getWidth(),
+				_bidibul.getHeight());
 		_bidibul.addMouseListener(new actionOnClic());
-		this.add(_bidibul);
-
 		// -- Fin création bidibul
-
 
 		// NotificationPanel
 		FlashPanel panFlash = new FlashPanel(Flash.getInstance());
 		panFlash.setPreferredSize(this.getMaximumSize());
-		panFlash.setBounds(200, 0, 311, 133);
+		panFlash.setBounds(10, 10, 311, 133);
+		Flash.error("Qu'est-ce que tu veux, morveux ?");
 		this.add(panFlash);
 
 		// PieMenuPanel
-		_pieMenuPanel = new PieMenuPanel (MainFrame.this, _bidibul.getX()+ _bidibul.getWidth()/2, _bidibul.getY()+ _bidibul.getHeight()/2 );
-		_pieMenuPanel.setBounds(0, 0 , 10000, 10000);
+		_pieMenuPanel = new PieMenuPanel (this, _bidibul.getX()+ _bidibul.getWidth()/2, _bidibul.getY()+ _bidibul.getHeight()/2 );
+		_pieMenuPanel.setBounds(0, 0 , 400, 400);
 		this.add(_pieMenuPanel);
+
+
+		this.add(_bidibul);
 
 		// Analyse des listes (clickable)
 		updateClickableModules();
@@ -134,16 +131,12 @@ public class MainFrame extends TranslucentFrame implements WindowListener {
 		this._bibidulPopupMenu = new BidibulPopupMenu(this);
 
 		// Ajout du listener de menu contextuel
+	    _bidibul.addMouseListener(new PopupMenuListener());
 
 		this._bidibul.setTransferHandler(new MyFileTransferHandler(
 				_pieMenuPanel, _listeModules));
 
-	    this._bidibul.addMouseListener(new PopupMenuListener());
-
 	    // new ModuleManagerFrame(); // @todo DEV Jérémie ASTORI
-
-
-
 	}
 
 	public class actionOnClic extends MouseAdapter {
@@ -151,16 +144,19 @@ public class MainFrame extends TranslucentFrame implements WindowListener {
 		public void mouseReleased(MouseEvent e) {
 			// Clic gauche
 			if (e.getButton() == MouseEvent.BUTTON1) {
-				if (_pieMenuPanel.getIconVisible() == false) {
+				//if (_pieMenuPanel.getIconVisible() == false) {
+				if (!_pieMenuPanel.isVisible()) {
 					_pieMenuPanel.refresh(_listeModulesClickable, 1);
-					_pieMenuPanel.setIconVisible(true);				//Affiche le PieMenu
-					MainFrame.this.update(MainFrame.this.getGraphics());
+				//	_pieMenuPanel.setIconVisible(true);				//Affiche le PieMenu
+					_pieMenuPanel.setVisible(true);				//Affiche le PieMenu
+				//	MainFrame.this.update(MainFrame.this.getGraphics());
 					//MainFrame.this.repaint();
 					System.out.println("click show!");
 				}
 				else {
-					_pieMenuPanel.setIconVisible(false);			//Cache le PieMenu
-					MainFrame.this.update(MainFrame.this.getContentPane().getGraphics());
+					//_pieMenuPanel.setIconVisible(false);			//Cache le PieMenu
+					_pieMenuPanel.setVisible(false);			//Cache le PieMenu
+				//	MainFrame.this.update(MainFrame.this.getGraphics());
 					System.out.println("click hide!");
 				}
 			}
@@ -168,19 +164,16 @@ public class MainFrame extends TranslucentFrame implements WindowListener {
 	}
 
 	class PopupMenuListener extends MouseAdapter { // Menu contextuel au clic droit
-
 		@Override
 		public void mousePressed(MouseEvent e) {
-			if (e.isPopupTrigger()) {
+			if (e.isPopupTrigger())
 	            _bibidulPopupMenu.show(e.getComponent(), e.getX(), e.getY());
-	        }
 	    }
 
 		@Override
 		public void mouseReleased(MouseEvent e) {
-			if (e.isPopupTrigger()) {
+			if (e.isPopupTrigger())
 	            _bibidulPopupMenu.show(e.getComponent(), e.getX(), e.getY());
-	        }
 	    }
 	}
 

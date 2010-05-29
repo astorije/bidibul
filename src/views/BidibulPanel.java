@@ -1,13 +1,12 @@
 package views;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.Timer;
 
 public class BidibulPanel extends JPanel {
 	private static final long serialVersionUID = 1L;
@@ -17,47 +16,47 @@ public class BidibulPanel extends JPanel {
 
 	public BidibulPanel(JFrame frame) {
 		super();
+		setLayout(null);
+		setOpaque(false);
 
-		this.setLayout(null);
-		this.setOpaque(false);
+		JLabel bidibul = new JLabel(new ImageIcon("img/bidibul200/bidibul.png"));
+		bidibul.setBounds(0, 0, 190, 187);
 
-		JLabel bidibul = new JLabel(new ImageIcon("img/bidibul.png"));
-		bidibul.setBounds(0, 0, 300, 300);
-
-		this._panLeftEye = new EyePanel();
-		this._panLeftEye.setPreferredSize(this.getMaximumSize());
-		this._panLeftEye.setBounds(
-				136,
-				133,
-				this._panLeftEye.getWidth(),
-				this._panLeftEye.getHeight()
+		_panLeftEye = new EyePanel(0);
+		_panLeftEye.setBounds(
+				85, 84,
+				_panLeftEye.getWidth(),
+				_panLeftEye.getHeight()
 		);
-		this.add(this._panLeftEye);
+		add(this._panLeftEye);
 
-		this._panRightEye = new EyePanel();
-		this._panRightEye.setPreferredSize(this.getMaximumSize());
-		this._panRightEye.setBounds(
-				117,
-				122,
-				this._panRightEye.getWidth(),
-				this._panRightEye.getHeight()
+		_panRightEye = new EyePanel(100);
+		_panRightEye.setBounds(
+				72, 76,
+				_panRightEye.getWidth(),
+				_panRightEye.getHeight()
 		);
-		this.add(this._panRightEye);
+		add(_panRightEye);
 
-		// @deprecated Cette solution utilise le GlassPane, et donc les MouseEvent ne sont plus détectés...
-		//frame.getGlassPane().addMouseMotionListener(this._panLeftEye);
-		//frame.getGlassPane().addMouseMotionListener(this._panRightEye);
+		Timer t = new Timer();
+	    t.schedule(new TimerTask() {
+			@Override
+			public void run() {
+	        	_panLeftEye.update();
+	        	_panRightEye.update();
+			}
+	    }, 0, 50);
 
-	    ActionListener taskPerformer = new ActionListener() {
-	        public void actionPerformed(ActionEvent evt) {
-	        	BidibulPanel.this._panLeftEye.update();
-	        	BidibulPanel.this._panRightEye.update();
-	        }
-	    };
+		add(bidibul);
+	}
 
-	    // Toutes les X milliseconds...
-	    new Timer(50, taskPerformer).start();
+	@Override
+	public int getWidth() {
+		return 190;
+	}
 
-		this.add(bidibul);
+	@Override
+	public int getHeight() {
+		return 187;
 	}
 }

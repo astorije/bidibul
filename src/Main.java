@@ -1,9 +1,12 @@
 
+import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
+
 import views.LoaderFrame;
 
 public class Main {
 	public static void main(String[] args) {
-		/*
+
 		try {
 			UIManager.setLookAndFeel(
 				UIManager.getSystemLookAndFeelClassName()
@@ -17,7 +20,7 @@ public class Main {
 		} catch (IllegalAccessException e) {
 			e.printStackTrace();
 		}
-		*/
+
 		new LoaderFrame();
 		//new PieMenuPanel (null, 100 + 100,200+ 100 );
 		//this.add(_pieMenuPanel);

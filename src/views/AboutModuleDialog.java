@@ -44,7 +44,7 @@ public class AboutModuleDialog extends JDialog {
 		lbl_title.setAlignmentX(CENTER_ALIGNMENT);
 		lbl_title.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 		lbl_title.setFont(new Font(
-				lbl_title.getFont().getFontName(),
+				lbl_title.getFont().getName(),
 				Font.BOLD,
 				lbl_title.getFont().getSize()+5
 		));
@@ -67,7 +67,7 @@ public class AboutModuleDialog extends JDialog {
 		lbl_author.setAlignmentX(CENTER_ALIGNMENT);
 		lbl_author.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 		lbl_author.setFont(new Font(
-				lbl_author.getFont().getFontName(),
+				lbl_author.getFont().getName(),
 				Font.PLAIN,
 				lbl_author.getFont().getSize()-2
 		));
@@ -77,6 +77,11 @@ public class AboutModuleDialog extends JDialog {
 		lbl_website.setAlignmentX(Component.CENTER_ALIGNMENT);
 		lbl_website.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 		lbl_website.setForeground(Color.BLUE);
+		lbl_website.setFont(new Font(
+				lbl_website.getFont().getName(),
+				Font.PLAIN,
+				lbl_website.getFont().getSize()
+		));
 		lbl_website.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 		lbl_website.addMouseListener(new MouseAdapter() {
 			@Override
