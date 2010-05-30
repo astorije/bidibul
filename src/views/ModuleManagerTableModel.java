@@ -23,7 +23,7 @@ class ModuleManagerTableModel extends AbstractTableModel {
 		String module_description;
 		Boolean module_is_active;
 
-		Iterator<Class<BidibulModule>> it = ModuleLoader.getInstance().getSetAllModules().iterator();
+		Iterator<Class<BidibulModule>> it = ModuleLoader.getInstance().getListAllModules().iterator();
 		while (it.hasNext()) {
 			module = it.next();
 
@@ -87,6 +87,10 @@ class ModuleManagerTableModel extends AbstractTableModel {
 		//	ModuleLoader.getInstance().getSetAllModules().
 
 	//		ModuleLoader.getInstance().startModule(c);
+			if (value.equals(true))
+				ModuleLoader.getInstance().startModule(row);
+			else
+				ModuleLoader.getInstance().stopModule(row);
 		}
     }
 }
