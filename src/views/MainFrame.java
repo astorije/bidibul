@@ -12,17 +12,12 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
-import java.util.ArrayList;
-import java.util.Iterator;
 
 import javax.swing.WindowConstants;
 
 import models.Flash;
-import tools.BidibulInformation;
-import tools.ModuleLoader;
 import tools.MyFileTransferHandler;
 import tools.TranslucentFrame;
-import utils.BidibulModule;
 
 /**
  * Frame principale du programme.
@@ -37,33 +32,12 @@ public class MainFrame extends TranslucentFrame implements WindowListener {
 	private BidibulPanel _bidibul;
 	private PieMenuPanel _pieMenuPanel = null;
 	private BidibulPopupMenu _bibidulPopupMenu;
-	private ArrayList<BidibulModule> _listeModules, _listeModulesClickable;
 	private SystemTray _tray = null;
 	private TrayIcon _trayIcon = null;
+	static private int _CLICKABLE = 1;
 
 	/**
-	 * CONSTRUCTEUR
-	 */
-	public MainFrame(ArrayList<BidibulModule> listModuleTemp) {
-		_listeModules = new ArrayList<BidibulModule>(listModuleTemp);
-		initialize();
-		output();
-		//initSystray(); // @todo A réactiver __PLUS TARD__, quand tout marchera à parfaitement
-		// ---
-		// Surcharge du constructeur. Lance la fonction onLoad des modules:
-		// cette fonction permet la surcharge éventuelle du constructeur
-		// ex: un module qui change l'apparence du bidibul
-		if (_listeModules != null && !_listeModules.isEmpty()) {
-			Iterator<BidibulModule> i = _listeModules.listIterator();
-			while (i.hasNext()) {
-				System.out.println("mod");
-				i.next().onLoad();
-			}
-		}
-	}
-
-	/**
-	 * @todo Constructeur installé par dépit, rien d'autre ne marchant quand aucun module n'est présent...
+	 * Constructeur de MainFrame
 	 */
 	public MainFrame() {
 		this.initialize();
@@ -89,13 +63,9 @@ public class MainFrame extends TranslucentFrame implements WindowListener {
 	 */
 	public void initialize() {
 		// Initialisation des listes:
-		_listeModulesClickable = new ArrayList<BidibulModule>();
-
-		// Vérif
-		VerifList("_listModules", _listeModules); // @todo JA a desactivé pour cause de crash complet
 
 		setLocation(100, 100);
-		setSize(331, 440);
+		setSize(500, 500);
 		setLayout(null);
 
 		// --CREATION DU BIDIBUL
@@ -117,15 +87,11 @@ public class MainFrame extends TranslucentFrame implements WindowListener {
 
 		// PieMenuPanel
 		_pieMenuPanel = new PieMenuPanel (this, _bidibul.getX()+ _bidibul.getWidth()/2, _bidibul.getY()+ _bidibul.getHeight()/2 );
-		_pieMenuPanel.setBounds(0, 0 , 400, 400);
+		_pieMenuPanel.setBounds(0, 0 , 500, 500);
 		this.add(_pieMenuPanel);
 
 
 		this.add(_bidibul);
-
-		// Analyse des listes (clickable)
-		updateClickableModules();
-		VerifList("_listModulesClickable", _listeModulesClickable);
 
 		// Création du menu contextuel
 		this._bibidulPopupMenu = new BidibulPopupMenu(this);
@@ -134,7 +100,7 @@ public class MainFrame extends TranslucentFrame implements WindowListener {
 	    _bidibul.addMouseListener(new PopupMenuListener());
 
 		this._bidibul.setTransferHandler(new MyFileTransferHandler(
-				_pieMenuPanel, _listeModules));
+				_pieMenuPanel));
 
 	    // new ModuleManagerFrame(); // @todo DEV Jérémie ASTORI
 	}
@@ -146,7 +112,7 @@ public class MainFrame extends TranslucentFrame implements WindowListener {
 			if (e.getButton() == MouseEvent.BUTTON1) {
 				//if (_pieMenuPanel.getIconVisible() == false) {
 				if (!_pieMenuPanel.isVisible()) {
-					_pieMenuPanel.refresh(_listeModulesClickable, 1);
+					_pieMenuPanel.refresh(_CLICKABLE);
 				//	_pieMenuPanel.setIconVisible(true);				//Affiche le PieMenu
 					_pieMenuPanel.setVisible(true);				//Affiche le PieMenu
 				//	MainFrame.this.update(MainFrame.this.getGraphics());
@@ -175,58 +141,6 @@ public class MainFrame extends TranslucentFrame implements WindowListener {
 			if (e.isPopupTrigger())
 	            _bibidulPopupMenu.show(e.getComponent(), e.getX(), e.getY());
 	    }
-	}
-
-	/**
-	 * Fonction destinée à disparaître: permet de vérifier la validité des
-	 * construction de List pour les modules
-	 *
-	 * @author Miro
-	 * @return
-	 */
-	void VerifList(String nomListe, ArrayList<BidibulModule> maListTemp) {
-		System.out.println("vérification de la liste '" + nomListe + "' : ");
-		if (!maListTemp.isEmpty()) {
-			Iterator<BidibulModule> i = maListTemp.listIterator();
-			while (i.hasNext()) {
-				System.out.println("     - " + BidibulInformation.get("name", i.next())/*i.next().getName()*/);
-			}
-		}
-	}
-
-	/**
-	 * Construit l'ensemble des listes de modules nécessaires (générale,
-	 * clickable, droppable)
-	 */
-	public void updateClickableModules() {
-		// Mise à jour des modclickable
-		Iterator<BidibulModule> i = _listeModules.listIterator();
-		BidibulModule tempMod;
-		while (i.hasNext()) {
-			tempMod = i.next();
-			if (extends_iClickable(tempMod))
-				_listeModulesClickable.add(tempMod);
-		}
-
-	}
-
-	/**
-	 * Renvoie true si la classe le module hérite de la classe iClickable
-	 *
-	 * @see BidibulModule
-	 * @see ModuleLoader#loadModules()
-	 * @todo Pourquoi ne pas utiliser instanceof à  la place ?
-	 * @todo Mieux que "Class<?>" ?
-	 */
-	private boolean extends_iClickable(BidibulModule mod) {
-		Class<?>[] interfaces = mod.getClass().getInterfaces();
-		for (int i = 0; i < interfaces.length; i++) {
-			System.out.println("interface :" + interfaces[i].getName());
-
-			if (interfaces[i].getName() == "utils.iClickable")
-				return true;
-		}
-		return false;
 	}
 
 

@@ -91,6 +91,7 @@ class ModuleManagerTableModel extends AbstractTableModel {
 				ModuleLoader.getInstance().startModule(row);
 			else
 				ModuleLoader.getInstance().stopModule(row);
+
 		}
     }
 }

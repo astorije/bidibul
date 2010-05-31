@@ -46,7 +46,7 @@ public class LoaderFrame extends JFrame {
 		listeModule = new ArrayList<BidibulModule>();
 		listeModule = ChargerModule();
 		if (listeModule.size() != 0)
-			new MainFrame((ArrayList<BidibulModule>) listeModule);
+			new MainFrame();
 		else
 			new MainFrame(); // @todo JA a ajouté pour cause de crash complet ( = 0 modules)
 		this.dispose();
