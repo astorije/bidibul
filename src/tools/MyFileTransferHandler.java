@@ -15,7 +15,6 @@ import java.util.List;
 import javax.swing.JComponent;
 import javax.swing.TransferHandler;
 
-import utils.BidibulModule;
 import views.PieMenuPanel;
 
 public class MyFileTransferHandler extends TransferHandler {
@@ -24,8 +23,6 @@ public class MyFileTransferHandler extends TransferHandler {
 	 */
 	private static final long serialVersionUID = 1L;
 	private PieMenuPanel _piePanel;
-	private ArrayList<BidibulModule> _listeModules;
-	private ArrayList<BidibulModule> _listeModulesDroppable;
 	private ArrayList<String> _listeFichier;
 
 	public MyFileTransferHandler(PieMenuPanel pieMenuPanel) {
@@ -73,9 +70,9 @@ public class MyFileTransferHandler extends TransferHandler {
 				if (flavor.equals(DataFlavor.javaFileListFlavor)) {
 					System.out.println("importData: FileListFlavor");
 
-					List l = (List) t
+					List<?> l = (List<?>) t
 							.getTransferData(DataFlavor.javaFileListFlavor);
-					Iterator iter = l.iterator();
+					Iterator<?> iter = l.iterator();
 					while (iter.hasNext()) {
 						File file = (File) iter.next();
 						System.out.println("GOT FILE: "
@@ -88,8 +85,6 @@ public class MyFileTransferHandler extends TransferHandler {
 					_piePanel.setFichierInfo(_listeFichier, flavor);
 					_piePanel.refresh(2);
 					_piePanel.setVisible(true);
-					_piePanel.getContainer().update(
-							_piePanel.getContainer().getGraphics());
 					// -----
 					return true;
 				} else if (flavor.equals(DataFlavor.stringFlavor)) {
@@ -109,9 +104,6 @@ public class MyFileTransferHandler extends TransferHandler {
 					_piePanel.setFichierInfo(_listeFichier, flavor);
 					_piePanel.refresh(2);
 					_piePanel.setVisible(true);
-					_piePanel.getContainer().update(
-							_piePanel.getContainer().getGraphics());
-
 				} else {
 					System.out.println("importData rejected: " + flavor);
 					// Don't return; try next flavor.

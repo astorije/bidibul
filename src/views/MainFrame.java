@@ -42,7 +42,7 @@ public class MainFrame extends TranslucentFrame implements WindowListener {
 	public MainFrame() {
 		this.initialize();
 		this.output();
-//		this.initSystray();
+		this.initSystray();
 	}
 
 	/**
@@ -86,7 +86,7 @@ public class MainFrame extends TranslucentFrame implements WindowListener {
 		this.add(panFlash);
 
 		// PieMenuPanel
-		_pieMenuPanel = new PieMenuPanel (this, _bidibul.getX()+ _bidibul.getWidth()/2, _bidibul.getY()+ _bidibul.getHeight()/2 );
+		_pieMenuPanel = new PieMenuPanel (_bidibul.getX()+ _bidibul.getWidth()/2, _bidibul.getY()+ _bidibul.getHeight()/2 );
 		_pieMenuPanel.setBounds(0, 0 , 500, 500);
 		this.add(_pieMenuPanel);
 
@@ -110,19 +110,13 @@ public class MainFrame extends TranslucentFrame implements WindowListener {
 		public void mouseReleased(MouseEvent e) {
 			// Clic gauche
 			if (e.getButton() == MouseEvent.BUTTON1) {
-				//if (_pieMenuPanel.getIconVisible() == false) {
 				if (!_pieMenuPanel.isVisible()) {
 					_pieMenuPanel.refresh(_CLICKABLE);
-				//	_pieMenuPanel.setIconVisible(true);				//Affiche le PieMenu
 					_pieMenuPanel.setVisible(true);				//Affiche le PieMenu
-				//	MainFrame.this.update(MainFrame.this.getGraphics());
-					//MainFrame.this.repaint();
 					System.out.println("click show!");
 				}
 				else {
-					//_pieMenuPanel.setIconVisible(false);			//Cache le PieMenu
 					_pieMenuPanel.setVisible(false);			//Cache le PieMenu
-				//	MainFrame.this.update(MainFrame.this.getGraphics());
 					System.out.println("click hide!");
 				}
 			}

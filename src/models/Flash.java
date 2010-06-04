@@ -50,6 +50,13 @@ public class Flash extends AbstractModel implements Observer {
 		}
 	}
 
+	public static void up() {
+		System.out.println("Bulle en haut demandée");
+	}
+
+	public static void down() {
+		System.out.println("Bulle en bas demandée");
+	}
 	public static Flash getInstance() {
 		if(Flash._instance == null)
 			Flash._instance = new Flash();

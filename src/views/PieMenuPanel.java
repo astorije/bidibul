@@ -1,6 +1,5 @@
 package views;
 
-import java.awt.Container;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -32,7 +31,6 @@ public class PieMenuPanel extends JPanel {
 	private Hashtable<String, BidibulModule> modules;
 	private ArrayList<BidibulModule> _listeModules, _listeAffichage;
 	private DataFlavor _flavor;
-	private Container _container;
 	private int _posX=0;
 	private int _posY = 0;
 	int widthDock = 300;
@@ -41,9 +39,10 @@ public class PieMenuPanel extends JPanel {
 	double thetaAngle;
 	double pi = 3.1416;
 	int sizeRotor = 150;
-	private static int _ICONSIZE = 100;
+	private static int _ICONSIZE = 70;
 	Boolean iconVisible = false;
 	String[] _listeFichier;
+	private static int _HEIGHT_FOR_HIDE = 30;
 
 	/**
 	 * Constructeur du PieMenu:
@@ -51,9 +50,8 @@ public class PieMenuPanel extends JPanel {
 	 * @param PosX
 	 * @param PosY
 	 */
-	public PieMenuPanel(Container panelAff, int PosX, int PosY){//constructor
+	public PieMenuPanel(int PosX, int PosY){//constructor
 		setLayout(null);
-		_container = panelAff;
 		//_listIcon = listIcon;
 		_posX = PosX;
 		_posY = PosY;
@@ -65,9 +63,6 @@ public class PieMenuPanel extends JPanel {
 		setVisible(false);
 		setOpaque(false);
 	//	_listeFichier;
-	}
-	public Container getContainer() {
-		return this._container;
 	}
 
 	public void setFichierInfo(ArrayList<String> listFichier, DataFlavor flavor) {
@@ -120,8 +115,10 @@ public class PieMenuPanel extends JPanel {
 		int Y=sizeRotor, Yprim =sizeRotor;
 		double theta = thetaAngle;
 		int i;
+		//Mise à zéro
 		icons.clear();
 		this.removeAll();
+		Flash.down();
 		//	Création dynamique des icones
 		for (i=1;i<=nbreIcons; i++) {
 			//Cas Clickable
@@ -141,14 +138,12 @@ public class PieMenuPanel extends JPanel {
 			icons.get("icon" + i).addMouseListener(new actionOnClic(i, mode));
 			Xprim = (int) (X * Math.cos(theta) - Y * Math.sin(theta));
 			Yprim = (int) (X* Math.sin(theta) + Y * Math.cos(theta));
+			if (Yprim < _HEIGHT_FOR_HIDE) {
+				Flash.up();
+			}
 			theta+=thetaAngle;
 			this.add(icons.get("icon" + i));
 		}
-		//this.update(this.getGraphics());
-
-
-		//_container.update(_container.getGraphics());
-
 	}
 
 	/**
@@ -205,10 +200,10 @@ public class PieMenuPanel extends JPanel {
 				String tooltip = ((iClickable) modules.get("icon" + numIcon)).getClickTooltip();
 				Flash.notice(tooltip);
 			}
-			if (mode ==2)
+			if (mode == 2)
 			{
-				//String tooltip = ((iDroppable) modules.get("icon" + numIcon)).getDropTooltip();
-				//Flash.notice(tooltip);
+				String tooltip = ((iDroppable) modules.get("icon" + numIcon)).getDropTooltip();
+				Flash.notice(tooltip);
 			}
 		}
 
@@ -216,16 +211,7 @@ public class PieMenuPanel extends JPanel {
 		@Override
 		public void mouseExited(MouseEvent e)
 		{
-			if (mode == 1)
-			{
-				String tooltip = ((iClickable) modules.get("icon" + numIcon)).getClickTooltip();
-				Flash.rollback();
-			}
-			if (mode ==2)
-			{
-				String tooltip = ((iDroppable) modules.get("icon" + numIcon)).getDropTooltip();
-				Flash.rollback();
-			}
+			Flash.rollback();
 		}
 		@Override
 		public void mouseReleased(MouseEvent e)						//sur clic de la souris
@@ -310,8 +296,6 @@ public class PieMenuPanel extends JPanel {
 
 			}
 		}
-		VerifList("liste des odules droppable détectés: ",
-				_listeAffichage);
 	}
 
 	/**

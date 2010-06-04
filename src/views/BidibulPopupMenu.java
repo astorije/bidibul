@@ -1,6 +1,7 @@
 package views;
 
 import java.awt.AWTException;
+import java.awt.Frame;
 import java.awt.TrayIcon;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -102,8 +103,8 @@ public class BidibulPopupMenu extends JPopupMenu implements ActionListener,
 			try {
 	             this._frame.getSystemTray().add(this._frame.getTrayIcon());
 	             this._frame.getTrayIcon().displayMessage("Bidibul", "Ton bidibul à été caché. Double-clic sur cette icone lorsque tu voudras le faire réapparaitre!", TrayIcon.MessageType.INFO);
-	             //int state = this._frame.getExtendedState(); // get the current state
-	             //state = state & this._frame.ICONIFIED;
+	             int state = this._frame.getExtendedState(); // get the current state
+	             state = state & Frame.ICONIFIED;
 	             this._frame.setVisible(false);
 	         } catch (AWTException e1) {
 	        	 System.out.println("no");
