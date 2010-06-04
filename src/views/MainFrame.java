@@ -2,6 +2,7 @@ package views;
 
 import java.awt.Image;
 import java.awt.MenuItem;
+import java.awt.Point;
 import java.awt.PopupMenu;
 import java.awt.SystemTray;
 import java.awt.Toolkit;
@@ -10,6 +11,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseMotionListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 
@@ -26,7 +28,7 @@ import tools.TranslucentFrame;
  * @author Jérémie ASTORI
  * @author Dominique CLAUSE
  */
-public class MainFrame extends TranslucentFrame implements WindowListener {
+public class MainFrame extends TranslucentFrame implements WindowListener, MouseMotionListener {
 	private static final long serialVersionUID = 1L;
 
 	private BidibulPanel _bidibul;
@@ -34,6 +36,10 @@ public class MainFrame extends TranslucentFrame implements WindowListener {
 	private BidibulPopupMenu _bibidulPopupMenu;
 	private SystemTray _tray = null;
 	private TrayIcon _trayIcon = null;
+
+	private boolean mMoveStart = false;
+	private boolean moveableFrame = false;
+	private Point mMouseClickPoint = null;
 	static private int _CLICKABLE = 1;
 
 	/**
@@ -105,12 +111,18 @@ public class MainFrame extends TranslucentFrame implements WindowListener {
 	    new ModuleManagerFrame(); // @todo DEV Jérémie ASTORI
 	}
 
+
 	public class actionOnClic extends MouseAdapter {
+		private Boolean pressed;
+
 		@Override
 		public void mouseReleased(MouseEvent e) {
 			// Clic gauche
 			if (e.getButton() == MouseEvent.BUTTON1) {
-				if (!_pieMenuPanel.isVisible()) {
+				if (moveableFrame){
+					mMoveStart = false;
+				}
+				else if (!_pieMenuPanel.isVisible()) {
 					_pieMenuPanel.refresh(_CLICKABLE);
 					_pieMenuPanel.setVisible(true);				//Affiche le PieMenu
 					System.out.println("click show!");
@@ -119,6 +131,14 @@ public class MainFrame extends TranslucentFrame implements WindowListener {
 					_pieMenuPanel.setVisible(false);			//Cache le PieMenu
 					System.out.println("click hide!");
 				}
+			}
+		}
+
+		@Override
+		public void mousePressed(MouseEvent mouseEvent) {
+			if (moveableFrame){
+				mMouseClickPoint = mouseEvent.getPoint();
+				mMoveStart = true;
 			}
 		}
 	}
@@ -189,6 +209,27 @@ public class MainFrame extends TranslucentFrame implements WindowListener {
 		return this._trayIcon;
 	}
 
+	private void _moveWindowTo(Point point) {
+		int musDiffX = point.x - mMouseClickPoint.x;
+		int musDiffY = point.y - mMouseClickPoint.y;
+
+		setLocation( getLocation().x + musDiffX, getLocation().y + musDiffY );
+		this.setLocation( getLocation() );
+	}
+
+	public void toggleMoveableFrame(){
+		if (moveableFrame){
+			moveableFrame = false;
+			_bidibul.removeMouseMotionListener(this);
+			Flash.rollback();
+		}
+		else {
+			moveableFrame = true;
+			_bidibul.addMouseMotionListener(this);
+			Flash.notice("Déplace moi sur l'écran !");
+		}
+	}
+
 	@Override
 	public void windowActivated(WindowEvent arg0) {
 	}
@@ -202,6 +243,8 @@ public class MainFrame extends TranslucentFrame implements WindowListener {
 	 *
 	 * @see RightClickMenu#exit()
 	 */
+
+
 	@Override
 	public void windowClosing(WindowEvent arg0) {
 		BidibulPopupMenu.exit();
@@ -222,4 +265,24 @@ public class MainFrame extends TranslucentFrame implements WindowListener {
 	@Override
 	public void windowOpened(WindowEvent arg0) {
 	}
+
+	// Fonctions relatives au drag du bidibul
+
+	@Override
+	public void mouseDragged(MouseEvent arg0) {
+		_moveWindowTo(arg0.getPoint());
+
+	}
+
+	@Override
+	public void mouseMoved(MouseEvent arg0) {
+
+	}
+
+
+
+
+
+
+
 }

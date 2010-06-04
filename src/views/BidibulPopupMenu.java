@@ -30,6 +30,7 @@ public class BidibulPopupMenu extends JPopupMenu implements ActionListener,
 	private static final String MODULE_MANAGEMENT = "Activer/Désactiver un module";
 	private static final String ALWAYS_ON_TOP = "Toujours au premier plan";
 	private static final String BIDIBUL_HIDE = "Cacher le bidibul";
+	private static final String BIDIBUL_MOVE = "Déplacer le bidibul";
 	private static final String EXIT = "Quitter Bidibul";
 
 	public BidibulPopupMenu(MainFrame frame) {
@@ -48,6 +49,12 @@ public class BidibulPopupMenu extends JPopupMenu implements ActionListener,
 	    itmAlwaysOnTop.setMnemonic(KeyEvent.VK_T);
 	    itmAlwaysOnTop.addItemListener(this);
 	    this.add(itmAlwaysOnTop);
+
+	    // Déplacer le bidibul
+	    JCheckBoxMenuItem itmMoveBidibul = new JCheckBoxMenuItem(BIDIBUL_MOVE);
+	    itmMoveBidibul.setMnemonic(KeyEvent.VK_D);
+	    itmMoveBidibul.addItemListener(this);
+	    this.add(itmMoveBidibul);
 
 	    this.addSeparator();
 
@@ -111,6 +118,7 @@ public class BidibulPopupMenu extends JPopupMenu implements ActionListener,
 	             System.err.println(e1);
 	         }
 		}
+		//Déplacer le bidibul
     }
 
 	@Override
@@ -121,6 +129,9 @@ public class BidibulPopupMenu extends JPopupMenu implements ActionListener,
     			this._frame.setAlwaysOnTop(true);
         	else
     			this._frame.setAlwaysOnTop(false);
+		}
+		else if (source.getText() == BIDIBUL_MOVE){
+			this._frame.toggleMoveableFrame();
 		}
     }
 }
