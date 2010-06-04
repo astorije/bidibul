@@ -10,6 +10,7 @@ import javax.swing.JPanel;
 public class EyeLidPanel extends JPanel {
 	private static final long serialVersionUID = 1L;
 	private Timer _timerClosingInterval;
+	boolean _forceBlink = false;
 
 	private JLabel[] _lblsEyeLid = {
 		new JLabel(new ImageIcon("img/bidibul200/eyelids/0.png")),

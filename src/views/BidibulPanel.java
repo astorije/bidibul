@@ -20,9 +20,9 @@ public class BidibulPanel extends JPanel {
 		setOpaque(false);
 
 		JLabel bidibul = new JLabel(new ImageIcon("img/bidibul200/bidibul.png"));
-		bidibul.setBounds(0, 0, 190, 187);
+		bidibul.setBounds(0, 0, getWidth(), getHeight());
 
-		_panLeftEye = new EyePanel(0);
+		_panLeftEye = new EyePanel();
 		_panLeftEye.setBounds(
 				85, 84,
 				_panLeftEye.getWidth(),
@@ -30,7 +30,7 @@ public class BidibulPanel extends JPanel {
 		);
 		add(this._panLeftEye);
 
-		_panRightEye = new EyePanel(100);
+		_panRightEye = new EyePanel();
 		_panRightEye.setBounds(
 				72, 76,
 				_panRightEye.getWidth(),
@@ -39,6 +39,7 @@ public class BidibulPanel extends JPanel {
 		add(_panRightEye);
 
 		Timer t = new Timer();
+
 	    t.schedule(new TimerTask() {
 			@Override
 			public void run() {
@@ -46,6 +47,16 @@ public class BidibulPanel extends JPanel {
 	        	_panRightEye.update();
 			}
 	    }, 0, 50);
+
+		t.schedule(new TimerTask() {
+			@Override
+			public void run() {
+				if(Math.random() <= 0.20) {
+					_panLeftEye.blink();
+					_panRightEye.blink();
+				}
+			}
+	    }, 1000, 700);
 
 		add(bidibul);
 	}

@@ -192,8 +192,11 @@ public class ModuleLoader {
 	 */
 	private boolean extends_BidibulModule(Class<?> c){
 		Class<?> superclass = c.getSuperclass();
-		//System.out.println("pas BidibulModule :" + superclass.getName());
-		if (superclass.getName() == "utils.BidibulModule")
+		if(superclass == null) {
+			System.out.println("pas une sous-classe");
+			return false;
+		}
+		else if (superclass.getName() == "utils.BidibulModule")
 				return true;
 		else {
 			System.out.println("pas BidibulModule :" + superclass.getName());

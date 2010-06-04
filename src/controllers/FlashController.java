@@ -3,6 +3,7 @@ package controllers;
 import java.util.Observable;
 import java.util.Observer;
 
+@Deprecated
 public class FlashController extends AbstractController implements Observer {
 
 	public FlashController() {}

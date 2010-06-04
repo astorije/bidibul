@@ -37,7 +37,6 @@ public class FlashPanel extends JPanel implements Observer {
 		setOpaque(false); //Cache le background de la bulle de notification
 
 		_txtaMessage = new JTextArea();
-		_txtaMessage.setText("test");
 		_txtaMessage.setEnabled(false); // Le texte n'est pas modifiable
 		_txtaMessage.setLineWrap(true); // Retour chariot auto
 		_txtaMessage.setWrapStyleWord(true); // Le retour chariot ne coupe pas les mots

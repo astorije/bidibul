@@ -6,6 +6,7 @@ import java.util.Observer;
 
 import models.AbstractModel;
 
+@Deprecated
 public abstract class AbstractController implements Observer {
     private final ArrayList _registeredViews;
     private final ArrayList _registeredModels;

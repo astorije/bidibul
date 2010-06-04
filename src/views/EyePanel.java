@@ -3,8 +3,6 @@ package views;
 import java.awt.MouseInfo;
 import java.awt.Point;
 import java.awt.PointerInfo;
-import java.util.Timer;
-import java.util.TimerTask;
 
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
@@ -20,7 +18,7 @@ public class EyePanel extends JPanel { //implements MouseMotionListener {
 
 	private EyeLidPanel _panEyeLid;
 
-	public EyePanel(int delay) {
+	public EyePanel() {
 		setVisible(true);
 		setLayout(null);
 		setOpaque(false); // Cache le background de la bulle de notification
@@ -50,16 +48,6 @@ public class EyePanel extends JPanel { //implements MouseMotionListener {
 				_iconEye.getIconHeight()
 		);
 		add(lbl_eye);
-
-	    Timer t = new Timer();
-
-		t.schedule(new TimerTask() {
-			@Override
-			public void run() {
-				if(Math.random() <= 0.85)
-					_panEyeLid.blink();
-			}
-	    }, 1000+delay, 5000);
 	}
 
 	public void update() {
@@ -97,5 +85,9 @@ public class EyePanel extends JPanel { //implements MouseMotionListener {
 	@Override
 	public int getWidth() {
 		return _iconEye.getIconWidth();
+	}
+
+	public void blink() {
+		_panEyeLid.blink();
 	}
 }
