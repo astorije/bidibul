@@ -19,27 +19,17 @@ class ModuleManagerTableModel extends AbstractTableModel {
 	public ModuleManagerTableModel() {
 		Class<BidibulModule> module;
 
-		String module_name;
-		String module_description;
-		Boolean module_is_active;
-
 		Iterator<Class<BidibulModule>> it = ModuleLoader.getInstance().getListAllModules().iterator();
 		while (it.hasNext()) {
 			module = it.next();
 
-			// @todo : Les champs par défaut sont amenés à disparaitre
-			// Au pire, ils doivent être affectés à la création
-			module_name = BidibulInformation.get("name", module);
-			if(module_name == null) module_name = "<Module sans nom>";
-			module_description = BidibulInformation.get("description", module);
-			if(module_description == null) module_description = "<Module sans description>";
-			module_is_active = ModuleLoader.getInstance().isActive(module);
-
-			if(module_name != null && module_description != null)
-				data.add(new Object[] {
-					new Boolean(module_is_active),
-					new String[] {module_name, module_description}
-				});
+			data.add(new Object[] {
+				new Boolean(ModuleLoader.getInstance().isActive(module)),
+				new String[] {
+					BidibulInformation.getName(module),
+					BidibulInformation.getDescription(module)
+				}
+			});
 		}
 	}
 

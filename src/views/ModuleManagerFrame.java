@@ -19,6 +19,8 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.TableColumnModel;
 
+import tools.ModuleLoader;
+
 // FIXME Ouverture de fenêtre multiple
 public class ModuleManagerFrame extends JFrame {
 	private static final long serialVersionUID = 1L;
@@ -134,8 +136,11 @@ public class ModuleManagerFrame extends JFrame {
 		@Override
 		public void actionPerformed(ActionEvent arg0) {
 			if(!_selectionModelTable.isSelectionEmpty()) {
-				_selectionModelTable.getMinSelectionIndex();
-				new AboutModuleDialog();
+				int index = _selectionModelTable.getMinSelectionIndex();
+				new AboutModuleDialog(
+						ModuleLoader
+						.getInstance()
+						.getListAllModules().get(index));
 			}
 		}
 

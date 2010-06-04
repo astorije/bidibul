@@ -8,7 +8,7 @@ import utils.BidibulModule;
  * Classe API de gestion des propriétés des modules
  * @author Nicolas B.
  */
-public class BidibulInformation {
+abstract public class BidibulInformation {
 	/**
      * Associe le nom de la classe à ses Properties.
      */
@@ -75,4 +75,22 @@ public class BidibulInformation {
 			_prop.get(c.getCanonicalName()).put(property, value);
 	}
 
+	public static String getName(Class<BidibulModule> c) {
+		String s = get("name", c);
+		return (s == null) ? "Module sans nom" : s;
+	}
+
+	public static String getDescription(Class<BidibulModule> c) {
+		String s = get("description", c);
+		return (s == null) ? "Pas de description" : s;
+	}
+
+	public static String getAuthor(Class<BidibulModule> c) {
+		String s = get("author", c);
+		return (s == null) ? "Anonyme" : s;
+	}
+
+	public static String getWebsite(Class<BidibulModule> c) {
+		return get("website", c);
+	}
 }

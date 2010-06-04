@@ -24,23 +24,26 @@ import javax.swing.JTextArea;
 import javax.swing.SwingUtilities;
 import javax.swing.border.EmptyBorder;
 
+import tools.BidibulInformation;
+import utils.BidibulModule;
+
 public class AboutModuleDialog extends JDialog {
 	private static final long serialVersionUID = 1L;
 	private String _website;
 
-	public AboutModuleDialog() {
+	public AboutModuleDialog(Class<BidibulModule> module) {
 		super();
 
 		// @todo Récupérer les vraies valeurs...
-		String title = "Super module";
-		String description = "Il fait des tas de trucs ce module...";
-		String author = "Bob l'éponge";
-		_website = "http://www.ambycia.fr/";
+		String name = BidibulInformation.getName(module);
+		String description = BidibulInformation.getDescription(module);
+		String author = BidibulInformation.getAuthor(module);
+		_website = BidibulInformation.getWebsite(module);
 
 		getContentPane().setLayout(new BoxLayout(getContentPane(), BoxLayout.Y_AXIS));
 
 		// Titre du module
-		JLabel lbl_title = new JLabel(title);
+		JLabel lbl_title = new JLabel(name);
 		lbl_title.setAlignmentX(CENTER_ALIGNMENT);
 		lbl_title.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 		lbl_title.setFont(new Font(
@@ -73,28 +76,31 @@ public class AboutModuleDialog extends JDialog {
 		));
 
 		// Site web relatif au module
-		JLabel lbl_website = new JLabel(_website);
-		lbl_website.setAlignmentX(Component.CENTER_ALIGNMENT);
-		lbl_website.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
-		lbl_website.setForeground(Color.BLUE);
-		lbl_website.setFont(new Font(
-				lbl_website.getFont().getName(),
-				Font.PLAIN,
-				lbl_website.getFont().getSize()
-		));
-		lbl_website.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-		lbl_website.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseClicked(MouseEvent arg0) {
-				if(SwingUtilities.isLeftMouseButton(arg0))
-					if (Desktop.isDesktopSupported())
-						try {
-							Desktop.getDesktop().browse(URI.create(_website));
-						} catch (IOException e) {
-							e.printStackTrace();
-						}
-			}
-		});
+		JLabel lbl_website = new JLabel();
+		if(_website != null) {
+			lbl_website.setText(_website);
+			lbl_website.setAlignmentX(Component.CENTER_ALIGNMENT);
+			lbl_website.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+			lbl_website.setForeground(Color.BLUE);
+			lbl_website.setFont(new Font(
+					lbl_website.getFont().getName(),
+					Font.PLAIN,
+					lbl_website.getFont().getSize()
+			));
+			lbl_website.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+			lbl_website.addMouseListener(new MouseAdapter() {
+				@Override
+				public void mouseClicked(MouseEvent arg0) {
+					if(SwingUtilities.isLeftMouseButton(arg0))
+						if (Desktop.isDesktopSupported())
+							try {
+								Desktop.getDesktop().browse(URI.create(_website));
+							} catch (IOException e) {
+								e.printStackTrace();
+							}
+				}
+			});
+		}
 
 		// Bouton "Fermer"
 		JButton btn_close = new JButton("Fermer");
@@ -115,10 +121,12 @@ public class AboutModuleDialog extends JDialog {
 		add(lbl_title);
 		add(txta_description);
 		add(lbl_author);
+
 		add(lbl_website);
+
 		add(pan_close);
 
-		setTitle("A propos du module \""+title+"\"");
+		setTitle("A propos du module \""+name+"\"");
 		setResizable(false);
 		setVisible(true);
 		pack();

@@ -102,7 +102,7 @@ public class MainFrame extends TranslucentFrame implements WindowListener {
 		this._bidibul.setTransferHandler(new MyFileTransferHandler(
 				_pieMenuPanel));
 
-	    // new ModuleManagerFrame(); // @todo DEV Jérémie ASTORI
+	    new ModuleManagerFrame(); // @todo DEV Jérémie ASTORI
 	}
 
 	public class actionOnClic extends MouseAdapter {
