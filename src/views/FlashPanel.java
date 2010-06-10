@@ -56,10 +56,11 @@ public class FlashPanel extends JPanel implements Observer {
 		// Pour que le message soit scrollable
 		JScrollPane scrollpanMessage = new JScrollPane(_txtaMessage);
 		scrollpanMessage.setViewportBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
+		scrollpanMessage.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
 		scrollpanMessage.setOpaque(false); // Composant ET viewport doivent être transparents
 		scrollpanMessage.getViewport().setOpaque(false);
 		scrollpanMessage.setBounds( // Position du JTextArea
-			17, 17, 175, 34
+			13, 16, 177, 36
 		);
 		add(scrollpanMessage);
 
