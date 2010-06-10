@@ -87,17 +87,17 @@ abstract public class BidibulInformation {
 
 	public static String getName(Class<BidibulModule> c) {
 		String s = get("name", c);
-		return (s == null) ? "Module sans nom" : s;
+		return (s == null || s.equals("")) ? "Module sans nom" : s;
 	}
 
 	public static String getDescription(Class<BidibulModule> c) {
 		String s = get("description", c);
-		return (s == null) ? "Pas de description" : s;
+		return (s == null || s.equals("")) ? "Pas de description" : s;
 	}
 
 	public static String getAuthor(Class<BidibulModule> c) {
 		String s = get("author", c);
-		return (s == null) ? "Anonyme" : s;
+		return (s == null || s.equals("")) ? "Anonyme" : s;
 	}
 
 	public static String getWebsite(Class<BidibulModule> c) {
