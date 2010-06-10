@@ -2,6 +2,7 @@ package tools;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -95,13 +96,16 @@ public class ModuleLoader {
 	 */
 	public boolean loadModules(){
 		String[] jarName = findJarNames();
+		String propertiesFileName=null;
+		URLClassLoader loader=null;
+		boolean classLoaded = false;
+		Class<BidibulModule> c = null;
 
 		if (jarName != null){
 			Enumeration<JarEntry> jarFiles;
 			_m.clear();
 			for (int i=0; i<jarName.length; i++){
 				// Prépare le ClassLoader
-				URLClassLoader loader=null;
 				try {
 					loader = new URLClassLoader(new URL[] {new URL("file:///" + System.getProperty("user.dir") + "/" + moduleDir + "/" + jarName[i])});
 				} catch (MalformedURLException e) {
@@ -120,7 +124,9 @@ public class ModuleLoader {
 				jarFiles = jar.entries();
 
 				while(jarFiles.hasMoreElements()){
-					String fileName = jarFiles.nextElement().toString();
+					JarEntry jarFile = jarFiles.nextElement();
+					String fileName = jarFile.toString();
+
 
 					//Vérifie que le fichier courant est un .class
 					if (fileName.endsWith(".class"))
@@ -134,20 +140,20 @@ public class ModuleLoader {
 
 							// Vérifie que la classe est un BidibulModule
 							if (extends_BidibulModule(externalClass) ) {
-								Class<BidibulModule> c  = (Class<BidibulModule>) externalClass;
+								c  = (Class<BidibulModule>) externalClass;
 								_c.add(c);
-								BidibulInformation.add(c);
+								classLoaded = true;
+								//BidibulInformation.add(c, jar);
 								BidibulProperties p = new BidibulProperties("global");
 								if (p.get(c.getCanonicalName()) != null && p.get(c.getCanonicalName()).equals("0")) {
-									//_m.put(c, null);
 									_m.add(null);
 									System.out.println("BidibulModule inactif: " + externalClass.getCanonicalName());
 								} else {
 									//startModule(c);
 									BidibulModule m  = c.newInstance();
+									m.onLoad();
 									_m.add(_c.indexOf(c), m);
 									m.addObserver(Flash.getInstance());
-									System.out.println("Démarrage module : " + BidibulInformation.get("name", c));
 									System.out.println("BidibulModule actif : " + externalClass.getCanonicalName());
 								}
 							}
@@ -160,7 +166,17 @@ public class ModuleLoader {
 							e.printStackTrace();
 						}
 					}
+					else if(fileName.endsWith(".properties")){
+						propertiesFileName = fileName;
+					}
+
 				}
+			}
+			if (classLoaded){
+				InputStream in = loader.getResourceAsStream(propertiesFileName);
+				BidibulInformation.add(c, in);
+				classLoaded = false;
+				propertiesFileName = null;
 			}
 		}
 		return true;
@@ -221,6 +237,7 @@ public class ModuleLoader {
 		/*if (_m.containsKey(c)) {
 			_m.put(c, null);*/
 		if (_c.size() >= n) {
+			_m.get(n).onStop();
 			_m.set(n, null);
 			System.out.println("Arrêt module : " + BidibulInformation.get("name", _c.get(n)));
 			// Sauvegarde
@@ -252,6 +269,7 @@ public class ModuleLoader {
 	public void startModule(int n){
 		try {
 			BidibulModule m  = _c.get(n).newInstance();
+			m.onLoad();
 			_m.remove(n);
 			_m.add(n, m);
 			m.addObserver(Flash.getInstance());

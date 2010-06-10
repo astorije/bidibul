@@ -5,6 +5,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Properties;
 
@@ -18,7 +19,7 @@ public class BidibulProperties extends Properties{
      * Le nom du dossier où sont stockés les .properties de l'application.
      * @see BidibulProperties#save()
      */
-	private static final String _propertiesDir = "properties";
+	private  final String _propertiesDir;
 
 	/**
      * Le nom du fichier .properties
@@ -36,11 +37,13 @@ public class BidibulProperties extends Properties{
 	public BidibulProperties(String name) {
 		super();
 		_name = name;
+		_propertiesDir = "properties";
 
 		File f = new File(_propertiesDir + "/" + name + ".properties");
 		if (f.exists()) {
 			try {
 				this.load(new FileInputStream(_propertiesDir + "/" + name + ".properties"));
+				System.out.println("fichier properties du module "+name+" chargé.");
 			} catch (FileNotFoundException e) {
 				e.printStackTrace();
 			} catch (IOException e) {
@@ -50,22 +53,45 @@ public class BidibulProperties extends Properties{
 	}
 
 	/**
+     * Constructeur
+     * @param name : Le nom des properties
+     * @param in : Le flux vers le fichier properties
+     */
+	public BidibulProperties(String name, InputStream in) {
+		super();
+		_name = name;
+		_propertiesDir = null;
+
+		try {
+			this.load(in);
+			System.out.println("fichier properties du module "+name+" chargé.");
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	/**
 	 * Enregistre les Properties
 	 * @return boolean true si la sauvegarde a été effectuée, false sinon
 	 */
 	public boolean save() {
-		OutputStream out;
-		try {
-			out = new FileOutputStream(_propertiesDir + "/" + _name + ".properties");
-			this.store(out, null);
-			out.flush();
-			out.close();
-		} catch (FileNotFoundException e) {
-			e.printStackTrace(); return false;
-		} catch (IOException e) {
-			e.printStackTrace(); return false;
+		if (_propertiesDir != null) {
+			OutputStream out;
+			try {
+				out = new FileOutputStream(_propertiesDir + "/" + _name + ".properties");
+				this.store(out, null);
+				out.flush();
+				out.close();
+			} catch (FileNotFoundException e) {
+				e.printStackTrace(); return false;
+			} catch (IOException e) {
+				e.printStackTrace(); return false;
+			}
+			return true;
 		}
-		return true;
+		return false;
 	}
 
 	/**
@@ -73,15 +99,18 @@ public class BidibulProperties extends Properties{
 	 * @param String le nom des properties
 	 * @return les BidibulProperties chargées
 	 */
-	public static BidibulProperties load(String name) {
-		BidibulProperties p = new BidibulProperties(name);
-		try {
-			p.load(new FileInputStream(_propertiesDir + "/" + name + ".properties"));
-		} catch (FileNotFoundException e) {
-			e.printStackTrace(); return null;
-		} catch (IOException e) {
-			e.printStackTrace(); return null;
+	public BidibulProperties load(String name) {
+		if (_propertiesDir != null) {
+			BidibulProperties p = new BidibulProperties(name);
+			try {
+				p.load(new FileInputStream(_propertiesDir + "/" + name + ".properties"));
+			} catch (FileNotFoundException e) {
+				e.printStackTrace(); return null;
+			} catch (IOException e) {
+				e.printStackTrace(); return null;
+			}
+			return p;
 		}
-		return p;
+		return null;
 	}
 }

@@ -1,5 +1,6 @@
 package tools;
 
+import java.io.InputStream;
 import java.util.HashMap;
 
 import utils.BidibulModule;
@@ -28,6 +29,15 @@ abstract public class BidibulInformation {
      */
 	public static void add(Class<BidibulModule> c) {
 		_prop.put(c.getCanonicalName(), new BidibulProperties(c.getCanonicalName()));
+	}
+
+	/**
+     * Ajoute les propriétés d'un module
+     * @param c : la classe à ajouter
+     * @param in : le flux vers le fichier properties
+     */
+	public static void add(Class<BidibulModule> c, InputStream in) {
+		_prop.put(c.getCanonicalName(), new BidibulProperties(c.getCanonicalName(), in));
 	}
 
 	/**
