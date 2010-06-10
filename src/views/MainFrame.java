@@ -18,6 +18,7 @@ import java.awt.event.WindowListener;
 import javax.swing.WindowConstants;
 
 import models.Flash;
+import tools.BidibulProperties;
 import tools.MyFileTransferHandler;
 import tools.TranslucentFrame;
 
@@ -70,7 +71,16 @@ public class MainFrame extends TranslucentFrame implements WindowListener, Mouse
 	public void initialize() {
 		// Initialisation des listes:
 
-		setLocation(100, 100);
+		// Chargement de la position initiale
+		BidibulProperties p = new BidibulProperties("global");
+		Integer posX = Integer.parseInt(p.get("posX") != null ? (String) p.get("posX") : "100");
+		Integer posY = Integer.parseInt(p.get("posY") != null ? (String) p.get("posY") : "100");
+		setLocation((posX>0 ? posX: 100), (posY>0 ? posY: 100));
+		if (((String) p.get("alwaysOnTop")).equals("1"))
+			this.setAlwaysOnTop(true);
+		else
+			this.setAlwaysOnTop(false);
+
 		setSize(500, 500);
 		setLayout(null);
 
@@ -222,6 +232,11 @@ public class MainFrame extends TranslucentFrame implements WindowListener, Mouse
 			moveableFrame = false;
 			_bidibul.removeMouseMotionListener(this);
 			Flash.rollback();
+			// Sauvegarde de la position
+			BidibulProperties p = new BidibulProperties("global");
+			p.put("posX", ((Integer) this.getLocation().x).toString());
+			p.put("posY", ((Integer) this.getLocation().y).toString());
+			p.save();
 		}
 		else {
 			moveableFrame = true;

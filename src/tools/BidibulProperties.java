@@ -43,7 +43,6 @@ public class BidibulProperties extends Properties{
 		if (f.exists()) {
 			try {
 				this.load(new FileInputStream(_propertiesDir + "/" + name + ".properties"));
-				System.out.println("fichier properties du module "+name+" chargé.");
 			} catch (FileNotFoundException e) {
 				e.printStackTrace();
 			} catch (IOException e) {
@@ -78,6 +77,9 @@ public class BidibulProperties extends Properties{
 	 */
 	public boolean save() {
 		if (_propertiesDir != null) {
+			File f = new File(_propertiesDir);
+			if (!f.exists())
+				f.mkdir();
 			OutputStream out;
 			try {
 				out = new FileOutputStream(_propertiesDir + "/" + _name + ".properties");

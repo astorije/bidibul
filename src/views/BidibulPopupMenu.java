@@ -15,6 +15,7 @@ import javax.swing.JPopupMenu;
 import javax.swing.KeyStroke;
 
 import models.Flash;
+import tools.BidibulProperties;
 
 /**
  *
@@ -125,10 +126,19 @@ public class BidibulPopupMenu extends JPopupMenu implements ActionListener,
     public void itemStateChanged(ItemEvent e) {
         JMenuItem source = (JMenuItem)(e.getSource());
 		if(source.getText() == ALWAYS_ON_TOP) {
-        	if(e.getStateChange() == ItemEvent.SELECTED)
+        	if(e.getStateChange() == ItemEvent.SELECTED) {
     			this._frame.setAlwaysOnTop(true);
-        	else
+    			// Sauvegarde
+    			BidibulProperties p = new BidibulProperties("global");
+    			p.put("alwaysOnTop", "1");
+    			p.save();
+        	}else{
     			this._frame.setAlwaysOnTop(false);
+    			// Sauvegarde
+    			BidibulProperties p = new BidibulProperties("global");
+    			p.put("alwaysOnTop", "0");
+    			p.save();
+        	}
 		}
 		else if (source.getText() == BIDIBUL_MOVE){
 			this._frame.toggleMoveableFrame();
