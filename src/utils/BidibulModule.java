@@ -55,9 +55,4 @@ abstract public class BidibulModule extends Observable {
 	 * Effectue une action à l'arrêt du module
 	 */
 	abstract public void onStop();
-
-	/**
-	 * Renvoie le chemin relatif de l'image
-	 */
-	abstract public String getIcon();
 }

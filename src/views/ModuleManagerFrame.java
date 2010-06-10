@@ -21,7 +21,6 @@ import javax.swing.table.TableColumnModel;
 
 import tools.ModuleLoader;
 
-// FIXME Ouverture de fenêtre multiple
 public class ModuleManagerFrame extends JFrame {
 	private static final long serialVersionUID = 1L;
 	private JButton _btnAbout;

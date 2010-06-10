@@ -11,6 +11,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
@@ -29,10 +30,11 @@ import tools.TranslucentFrame;
  * @author Jérémie ASTORI
  * @author Dominique CLAUSE
  */
-public class MainFrame extends TranslucentFrame implements WindowListener, MouseMotionListener {
+public class MainFrame extends TranslucentFrame implements WindowListener, MouseListener, MouseMotionListener {
 	private static final long serialVersionUID = 1L;
 
 	private BidibulPanel _bidibul;
+	private FlashPanel _panFlash;
 	private PieMenuPanel _pieMenuPanel = null;
 	private BidibulPopupMenu _bibidulPopupMenu;
 	private SystemTray _tray = null;
@@ -43,19 +45,18 @@ public class MainFrame extends TranslucentFrame implements WindowListener, Mouse
 	private Point mMouseClickPoint = null;
 	static private int _CLICKABLE = 1;
 
-	/**
-	 * Constructeur de MainFrame
-	 */
 	public MainFrame() {
-		this.initialize();
-		this.output();
-		this.initSystray();
+		initialize();
+		output();
+		initSystray();
 	}
 
 	/**
 	 * Définition des paramètres de fenêtrage
 	 */
 	public void output() {
+		setTitle("Bidibul");
+
 		// Ne rien faire à la fermeture ([X] ou Alt-F4) car on veut une fermeture personnalisée
 	    setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
 
@@ -73,13 +74,14 @@ public class MainFrame extends TranslucentFrame implements WindowListener, Mouse
 
 		// Chargement de la position initiale
 		BidibulProperties p = new BidibulProperties("global");
-		Integer posX = Integer.parseInt(p.get("posX") != null ? (String) p.get("posX") : "100");
-		Integer posY = Integer.parseInt(p.get("posY") != null ? (String) p.get("posY") : "100");
-		setLocation((posX>0 ? posX: 100), (posY>0 ? posY: 100));
-		if (((String) p.get("alwaysOnTop")).equals("1"))
-			this.setAlwaysOnTop(true);
+		setLocation(
+			p.getPosX(),
+			p.getPosY()
+		);
+		if(p.isAlwaysOnTop())
+			setAlwaysOnTop(true);
 		else
-			this.setAlwaysOnTop(false);
+			setAlwaysOnTop(false);
 
 		setSize(500, 500);
 		setLayout(null);
@@ -95,36 +97,36 @@ public class MainFrame extends TranslucentFrame implements WindowListener, Mouse
 		// -- Fin création bidibul
 
 		// NotificationPanel
-		FlashPanel panFlash = new FlashPanel(Flash.getInstance());
-		panFlash.setPreferredSize(this.getMaximumSize());
-		panFlash.setBounds(10, 10, 311, 133);
-		Flash.error("Qu'est-ce que tu veux, morveux ?");
-		this.add(panFlash);
+		_panFlash = new FlashPanel(Flash.getInstance(), _bidibul);
+		_panFlash.setPreferredSize(this.getMaximumSize());
+		_panFlash.setBounds(
+				getWidth()/2 - _panFlash.getWidth()/2,
+				10,
+				_panFlash.getWidth(),
+				_panFlash.getHeight());
+		Flash.notice("Clique ou déplace un fichier sur moi !");
+		add(_panFlash);
+
+		addMouseListener(this);
 
 		// PieMenuPanel
 		_pieMenuPanel = new PieMenuPanel (_bidibul.getX()+ _bidibul.getWidth()/2, _bidibul.getY()+ _bidibul.getHeight()/2 );
 		_pieMenuPanel.setBounds(0, 0 , 500, 500);
-		this.add(_pieMenuPanel);
+		add(_pieMenuPanel);
 
-
-		this.add(_bidibul);
+		add(_bidibul);
 
 		// Création du menu contextuel
-		this._bibidulPopupMenu = new BidibulPopupMenu(this);
+		_bibidulPopupMenu = new BidibulPopupMenu(this);
 
 		// Ajout du listener de menu contextuel
 	    _bidibul.addMouseListener(new PopupMenuListener());
 
 		this._bidibul.setTransferHandler(new MyFileTransferHandler(
 				_pieMenuPanel));
-
-	    new ModuleManagerFrame(); // @todo DEV Jérémie ASTORI
 	}
 
-
 	public class actionOnClic extends MouseAdapter {
-		private Boolean pressed;
-
 		@Override
 		public void mouseReleased(MouseEvent e) {
 			// Clic gauche
@@ -167,7 +169,6 @@ public class MainFrame extends TranslucentFrame implements WindowListener, Mouse
 	    }
 	}
 
-
 	public void initSystray() {
 	     if (SystemTray.isSupported()) {
 	         //Crée une instance de systray
@@ -175,7 +176,7 @@ public class MainFrame extends TranslucentFrame implements WindowListener, Mouse
 	         // Charger l'image du bidibul dans le systray
 	         Image image = Toolkit.getDefaultToolkit().getImage("img/bidibul_tray.png");
 
-	         //Réctive le bidibul
+	         //Réactive le bidibul
 	         ActionListener listener = new ActionListener() {
 	             public void actionPerformed(ActionEvent e) {
 	                 setVisible(true);
@@ -193,8 +194,8 @@ public class MainFrame extends TranslucentFrame implements WindowListener, Mouse
 	         // Créer un popup menu sur le l'icone du Systray:
 	         PopupMenu popup = new PopupMenu();
 	         // Créer un menu:
-	         MenuItem quitItem = new MenuItem("Fermer le bidibul!");
-	         MenuItem showItem = new MenuItem("Montrer le Bidibul!");
+	         MenuItem quitItem = new MenuItem("Quitter Bidibul");
+	         MenuItem showItem = new MenuItem("Montrer Bidibul");
 	         quitItem.addActionListener(quit);
 	         showItem.addActionListener(listener);
 	         popup.add(showItem);
@@ -207,7 +208,7 @@ public class MainFrame extends TranslucentFrame implements WindowListener, Mouse
 	         _trayIcon.addActionListener(listener);
 
 	     } else {
-	    	 System.out.println("systray refusé");
+	    	 Flash.error("Je ne peux pas me cacher pour le moment.");
 	     }
 	}
 
@@ -232,11 +233,6 @@ public class MainFrame extends TranslucentFrame implements WindowListener, Mouse
 			moveableFrame = false;
 			_bidibul.removeMouseMotionListener(this);
 			Flash.rollback();
-			// Sauvegarde de la position
-			BidibulProperties p = new BidibulProperties("global");
-			p.put("posX", ((Integer) this.getLocation().x).toString());
-			p.put("posY", ((Integer) this.getLocation().y).toString());
-			p.save();
 		}
 		else {
 			moveableFrame = true;
@@ -246,58 +242,66 @@ public class MainFrame extends TranslucentFrame implements WindowListener, Mouse
 	}
 
 	@Override
-	public void windowActivated(WindowEvent arg0) {
-	}
+	public void windowActivated(WindowEvent arg0) {}
 
 	@Override
-	public void windowClosed(WindowEvent arg0) {
-	}
+	public void windowClosed(WindowEvent arg0) {}
 
 	/**
 	 * Surcharge la fermeture de la fenêtre pour la personnaliser
 	 *
 	 * @see RightClickMenu#exit()
 	 */
-
-
 	@Override
 	public void windowClosing(WindowEvent arg0) {
 		BidibulPopupMenu.exit();
 	}
 
 	@Override
-	public void windowDeactivated(WindowEvent arg0) {
+	public void windowDeactivated(WindowEvent arg0) {}
+
+	@Override
+	public void windowDeiconified(WindowEvent arg0) {}
+
+	@Override
+	public void windowIconified(WindowEvent arg0) {}
+
+	@Override
+	public void windowOpened(WindowEvent arg0) {}
+
+	@Override
+	public void mouseClicked(MouseEvent e) {}
+
+	/**
+	 * Lorsque la souris sort de l'écran, le FlashPanel doit se cacher.
+	 */
+	@Override
+	public void mouseExited(MouseEvent e) {
+		if(getMousePosition(true) != null)
+			return;
+		_panFlash.onMouseExit();
+	}
+
+	/**
+	 * Lorsque la souris sort de l'écran, le FlashPanel doit s'afficher.
+	 */
+	@Override
+	public void mouseEntered(MouseEvent e) {
+		_panFlash.onMouseEnter();
 	}
 
 	@Override
-	public void windowDeiconified(WindowEvent arg0) {
-	}
+	public void mousePressed(MouseEvent e) {}
 
 	@Override
-	public void windowIconified(WindowEvent arg0) {
-	}
+	public void mouseReleased(MouseEvent e) {}
 
-	@Override
-	public void windowOpened(WindowEvent arg0) {
-	}
-
-	// Fonctions relatives au drag du bidibul
-
+	// Fonctions relatives au déplacement du bidibul à l'écran
 	@Override
 	public void mouseDragged(MouseEvent arg0) {
 		_moveWindowTo(arg0.getPoint());
-
 	}
 
 	@Override
-	public void mouseMoved(MouseEvent arg0) {
-
-	}
-
-
-
-
-
-
-
+	public void mouseMoved(MouseEvent arg0) {}
 }

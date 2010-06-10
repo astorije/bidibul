@@ -13,7 +13,7 @@ import java.util.Properties;
  * Classe gérant les .properties des modules
  * @author Nicolas B.
  */
-public class BidibulProperties extends Properties{
+public class BidibulProperties extends Properties {
 	private static final long serialVersionUID = 1L;
 	/**
      * Le nom du dossier où sont stockés les .properties de l'application.
@@ -114,5 +114,23 @@ public class BidibulProperties extends Properties{
 			return p;
 		}
 		return null;
+	}
+
+	public int getPosX() {
+		String str = getProperty("posX");
+		if(str != null && Integer.parseInt(str) >= 0)
+			return Integer.parseInt(str);
+		else return 100;
+	}
+
+	public int getPosY() {
+		String str = getProperty("posY");
+		if(str != null && Integer.parseInt(str) >= 0)
+			return Integer.parseInt(str);
+		else return 100;
+	}
+
+	public boolean isAlwaysOnTop() {
+		return (getProperty("alwaysOnTop")).equals("1");
 	}
 }

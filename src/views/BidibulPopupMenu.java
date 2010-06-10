@@ -26,18 +26,19 @@ public class BidibulPopupMenu extends JPopupMenu implements ActionListener,
 															ItemListener {
 	private static final long serialVersionUID = 1L;
 
+	private static BidibulPopupMenu _instance;
 	private MainFrame _frame;
 
 	private static final String MODULE_MANAGEMENT = "Activer/Désactiver un module";
 	private static final String ALWAYS_ON_TOP = "Toujours au premier plan";
-	private static final String BIDIBUL_HIDE = "Cacher le bidibul";
-	private static final String BIDIBUL_MOVE = "Déplacer le bidibul";
+	private static final String BIDIBUL_HIDE = "Cacher Bidibul";
+	private static final String BIDIBUL_MOVE = "Déplacer Bidibul";
 	private static final String EXIT = "Quitter Bidibul";
 
 	public BidibulPopupMenu(MainFrame frame) {
 	    super();
-
-	    this._frame = frame;
+	    _instance = this;
+	    _frame = frame;
 
 	    // Gestion des modules
 	    JMenuItem itmModuleManagement = new JMenuItem(MODULE_MANAGEMENT);
@@ -47,6 +48,8 @@ public class BidibulPopupMenu extends JPopupMenu implements ActionListener,
 
 	    // Toujours au premier plan
 	    JCheckBoxMenuItem itmAlwaysOnTop = new JCheckBoxMenuItem(ALWAYS_ON_TOP);
+	    if(new BidibulProperties("global").isAlwaysOnTop())
+	    	itmAlwaysOnTop.setSelected(true);
 	    itmAlwaysOnTop.setMnemonic(KeyEvent.VK_T);
 	    itmAlwaysOnTop.addItemListener(this);
 	    this.add(itmAlwaysOnTop);
@@ -71,7 +74,7 @@ public class BidibulPopupMenu extends JPopupMenu implements ActionListener,
 	    JMenuItem itmExit = new JMenuItem(EXIT);
 	    itmExit.setMnemonic(KeyEvent.VK_Q);
 	    itmExit.setAccelerator(KeyStroke.getKeyStroke(
-	            KeyEvent.VK_F4, ActionEvent.ALT_MASK)); // Ne fonctionne pas, c'est juste pour information
+	            KeyEvent.VK_F4, ActionEvent.ALT_MASK)); // Ne fonctionne pas, c'est juste pour information de l'utilisateur
 	    itmExit.addActionListener(this);
 	    this.add(itmExit);
 	}
@@ -80,14 +83,18 @@ public class BidibulPopupMenu extends JPopupMenu implements ActionListener,
 	 * Action à lancer par défaut à la fermeture du programme
 	 */
 	public static void exit() {
+		// Sauvegarde de la position
+		BidibulProperties p = new BidibulProperties("global");
+		p.put("posX", ((Integer) _instance._frame.getLocation().x).toString());
+		p.put("posY", ((Integer) _instance._frame.getLocation().y).toString());
+		p.save();
+
 		Flash.notice("A bientôt !");
 
 		new Thread(new Runnable() {
 			public void run() {
 				try {
-					// @todo 500 est une valeur de développement, 3000 une valeur de production
-					Thread.sleep(500);
-					//Thread.sleep(3000);
+					Thread.sleep(2000);
 				}
 				catch (InterruptedException e) {
 					e.printStackTrace();
@@ -101,16 +108,14 @@ public class BidibulPopupMenu extends JPopupMenu implements ActionListener,
     public void actionPerformed(ActionEvent e) {
 		JMenuItem source = (JMenuItem)(e.getSource());
 		if(source.getText() == MODULE_MANAGEMENT)
-			// @todo ModuleManagerFrame.getInstance();
 			new ModuleManagerFrame();
 		else if(source.getText() == EXIT) {
 			exit();
 		}
-		//Cas du systray
-		else if (source.getText() == BIDIBUL_HIDE) {
+		else if (source.getText() == BIDIBUL_HIDE) { //Cas du systray
 			try {
 	             this._frame.getSystemTray().add(this._frame.getTrayIcon());
-	             this._frame.getTrayIcon().displayMessage("Bidibul", "Ton bidibul à été caché. Double-clic sur cette icone lorsque tu voudras le faire réapparaitre!", TrayIcon.MessageType.INFO);
+	             this._frame.getTrayIcon().displayMessage("Bidibul", "Je suis caché. Double-clique sur cette icone lorsque tu voudras me faire réapparaître !", TrayIcon.MessageType.INFO);
 	             int state = this._frame.getExtendedState(); // get the current state
 	             state = state & Frame.ICONIFIED;
 	             this._frame.setVisible(false);
@@ -126,16 +131,16 @@ public class BidibulPopupMenu extends JPopupMenu implements ActionListener,
     public void itemStateChanged(ItemEvent e) {
         JMenuItem source = (JMenuItem)(e.getSource());
 		if(source.getText() == ALWAYS_ON_TOP) {
+			BidibulProperties p = new BidibulProperties("global");
         	if(e.getStateChange() == ItemEvent.SELECTED) {
     			this._frame.setAlwaysOnTop(true);
     			// Sauvegarde
-    			BidibulProperties p = new BidibulProperties("global");
     			p.put("alwaysOnTop", "1");
     			p.save();
-        	}else{
+        	}
+        	else{
     			this._frame.setAlwaysOnTop(false);
     			// Sauvegarde
-    			BidibulProperties p = new BidibulProperties("global");
     			p.put("alwaysOnTop", "0");
     			p.save();
         	}

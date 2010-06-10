@@ -66,12 +66,12 @@ public class EyePanel extends JPanel { //implements MouseMotionListener {
 			int y = (int) e.getY() - _iconEye.getIconHeight()/2;
 
 			double angle = Math.atan2(y, x);
-			double radius = Math.sqrt(x*x + y*y);
+			double radius = Math.min(6, Math.sqrt(x*x + y*y));
 
-			int x_final = _iconPupil.getIconWidth()/2 // Correction de dioptrie horizontale...
-					+ (int)(Math.min(5, radius) * Math.cos(angle));
-			int y_final = _iconPupil.getIconHeight()/2 + 1 // Correction de dioptrie verticale...
-					+ (int)(Math.min(5, radius) * Math.sin(angle));
+			int x_final = _iconPupil.getIconWidth()/2 + 2 // Correction de dioptrie horizontale...
+					+ (int)(radius * Math.cos(angle));
+			int y_final = _iconPupil.getIconHeight()/2 + 2 // Correction de dioptrie verticale...
+					+ (int)(radius * Math.sin(angle));
 
 			_lblPupil.setLocation(x_final, y_final);
 		}

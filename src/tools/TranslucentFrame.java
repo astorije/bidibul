@@ -23,11 +23,8 @@ public class TranslucentFrame extends JFrame {
 	private static final long serialVersionUID = 1L;
 
 	private float alpha = 1.0f;
-	private Boolean undecorated = true; // @todo PROD
-	//private Boolean undecorated = false; // @todo DEV
+	private Boolean undecorated = true;
 	private Boolean windowTransparent = true;
-
-
 
 	public TranslucentFrame(GraphicsConfiguration gc) {
 		super(gc);

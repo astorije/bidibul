@@ -11,7 +11,7 @@ import utils.BidibulModule;
  * Flash est un singleton.
  * @author Jérémie ASTORI
  */
-public class Flash extends AbstractModel implements Observer {
+public class Flash extends Observable implements Observer {
 	private static Flash _instance = null;
 	private final ArrayList<FlashMessage> _flashMessages;
 

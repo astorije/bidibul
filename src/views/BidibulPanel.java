@@ -13,18 +13,23 @@ public class BidibulPanel extends JPanel {
 
 	private EyePanel _panLeftEye;
 	private EyePanel _panRightEye;
+	private ImageIcon _iconBidibul = new ImageIcon("img/bidibul200/bidibul.png");
+	private JLabel _lblMouth;
+
+	public static final ImageIcon MOUTH_NOTICE_IMG = new ImageIcon("img/bidibul200/mouths/normal.png");
+	public static final ImageIcon MOUTH_ERROR_IMG = new ImageIcon("img/bidibul200/mouths/error.png");
 
 	public BidibulPanel(JFrame frame) {
 		super();
 		setLayout(null);
 		setOpaque(false);
 
-		JLabel bidibul = new JLabel(new ImageIcon("img/bidibul200/bidibul.png"));
+		JLabel bidibul = new JLabel(_iconBidibul);
 		bidibul.setBounds(0, 0, getWidth(), getHeight());
 
 		_panLeftEye = new EyePanel();
 		_panLeftEye.setBounds(
-				85, 84,
+				92, 90,
 				_panLeftEye.getWidth(),
 				_panLeftEye.getHeight()
 		);
@@ -32,11 +37,21 @@ public class BidibulPanel extends JPanel {
 
 		_panRightEye = new EyePanel();
 		_panRightEye.setBounds(
-				72, 76,
+				77, 82,
 				_panRightEye.getWidth(),
 				_panRightEye.getHeight()
 		);
 		add(_panRightEye);
+
+		_lblMouth = new JLabel(MOUTH_NOTICE_IMG);
+		_lblMouth.setBounds(
+				68, 99,
+				MOUTH_NOTICE_IMG.getIconWidth(),
+				MOUTH_NOTICE_IMG.getIconHeight()
+		);
+		add(_lblMouth);
+
+		add(bidibul);
 
 		Timer t = new Timer();
 
@@ -56,18 +71,23 @@ public class BidibulPanel extends JPanel {
 					_panRightEye.blink();
 				}
 			}
-	    }, 1000, 700);
-
-		add(bidibul);
+	    }, 1000, 800);
 	}
 
 	@Override
 	public int getWidth() {
-		return 190;
+		return _iconBidibul.getIconWidth();
 	}
 
 	@Override
 	public int getHeight() {
-		return 187;
+		return _iconBidibul.getIconHeight();
+	}
+
+	public void setMouth(String type) {
+		if(type == "error")
+			_lblMouth.setIcon(MOUTH_ERROR_IMG);
+		else if(type == "notice")
+			_lblMouth.setIcon(MOUTH_NOTICE_IMG);
 	}
 }

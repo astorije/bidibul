@@ -159,29 +159,10 @@ public class PieMenuPanel extends JPanel {
 		BidibulModule tempMod;
 		while (i.hasNext()) {
 			tempMod = i.next();
-			if (extends_iClickable(tempMod))
+			if (tempMod instanceof iClickable)
 				_listeAffichage.add(tempMod);
 		}
 
-	}
-
-	/**
-	 * Renvoie true si la classe le module hérite de la classe iClickable
-	 *
-	 * @see BidibulModule
-	 * @see ModuleLoader#loadModules()
-	 * @todo Pourquoi ne pas utiliser instanceof à  la place ?
-	 * @todo Mieux que "Class<?>" ?
-	 */
-	private boolean extends_iClickable(BidibulModule mod) {
-		Class<?>[] interfaces = mod.getClass().getInterfaces();
-		for (int i = 0; i < interfaces.length; i++) {
-			System.out.println("interface :" + interfaces[i].getName());
-
-			if (interfaces[i].getName() == "utils.iClickable")
-				return true;
-		}
-		return false;
 	}
 
 	public class actionOnClic extends MouseAdapter {
@@ -256,7 +237,7 @@ public class PieMenuPanel extends JPanel {
 		while (i.hasNext()) {
 			tempMod = i.next();
 			// Si le module est droppable...
-			if (extends_iDroppable(tempMod)) {
+			if (tempMod instanceof iDroppable) {
 				// Vérifie que le module peut agir sur le type des documents
 				// drag&droppés:
 				if (((iDroppable) tempMod).getAllowedFlavor().contains(_flavor))
@@ -338,25 +319,6 @@ public class PieMenuPanel extends JPanel {
 				System.out.println("     - " + BidibulInformation.get("name", i.next())/*i.next().getName()*/);
 			}
 		}
-	}
-
-	/**
-	 * Renvoie true si la classe le module hérite de la classe iClickable
-	 *
-	 * @see BidibulModule
-	 * @see ModuleLoader#loadModules()
-	 * @todo Pourquoi ne pas utiliser instanceof à  la place ?
-	 * @todo Mieux que "Class<?>" ?
-	 */
-	private boolean extends_iDroppable(BidibulModule mod) {
-		Class<?>[] interfaces = mod.getClass().getInterfaces();
-		for (int i = 0; i < interfaces.length; i++) {
-			System.out.println("interface :" + interfaces[i].getName());
-
-			if (interfaces[i].getName() == "utils.iDroppable")
-				return true;
-		}
-		return false;
 	}
 }
 

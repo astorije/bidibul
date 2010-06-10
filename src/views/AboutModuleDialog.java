@@ -34,7 +34,6 @@ public class AboutModuleDialog extends JDialog {
 	public AboutModuleDialog(Class<BidibulModule> module) {
 		super();
 
-		// @todo Récupérer les vraies valeurs...
 		String name = BidibulInformation.getName(module);
 		String description = BidibulInformation.getDescription(module);
 		String author = BidibulInformation.getAuthor(module);
@@ -121,9 +120,7 @@ public class AboutModuleDialog extends JDialog {
 		add(lbl_title);
 		add(txta_description);
 		add(lbl_author);
-
 		add(lbl_website);
-
 		add(pan_close);
 
 		setTitle("A propos du module \""+name+"\"");
