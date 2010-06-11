@@ -9,11 +9,13 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
-public class EyePanel extends JPanel { //implements MouseMotionListener {
+import Main.Main;
+
+public class EyePanel extends JPanel {
 	private static final long serialVersionUID = 1L;
 	private JLabel _lblPupil;
-	private ImageIcon _iconEye = new ImageIcon("img/bidibul200/eye.png");
-	private ImageIcon _iconPupil= new ImageIcon("img/bidibul200/pupil.png");
+	private ImageIcon _iconEye = new ImageIcon(Main.getResource("bidibul200/eye.png"));
+	private ImageIcon _iconPupil= new ImageIcon(Main.getResource("bidibul200/pupil.png"));
 	private Point _previousMouseLocation = new Point();
 
 	private EyeLidPanel _panEyeLid;

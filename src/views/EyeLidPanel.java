@@ -7,16 +7,18 @@ import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
+import Main.Main;
+
 public class EyeLidPanel extends JPanel {
 	private static final long serialVersionUID = 1L;
 	private Timer _timerClosingInterval;
 	boolean _forceBlink = false;
 
 	private JLabel[] _lblsEyeLid = {
-		new JLabel(new ImageIcon("img/bidibul200/eyelids/0.png")),
-		new JLabel(new ImageIcon("img/bidibul200/eyelids/1.png")),
-		new JLabel(new ImageIcon("img/bidibul200/eyelids/2.png")),
-		new JLabel(new ImageIcon("img/bidibul200/eyelids/3.png"))
+		new JLabel(new ImageIcon(Main.getResource("bidibul200/eyelids/0.png"))),
+		new JLabel(new ImageIcon(Main.getResource("bidibul200/eyelids/1.png"))),
+		new JLabel(new ImageIcon(Main.getResource("bidibul200/eyelids/2.png"))),
+		new JLabel(new ImageIcon(Main.getResource("bidibul200/eyelids/3.png")))
 	};
 
 	public EyeLidPanel() {

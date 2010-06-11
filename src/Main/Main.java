@@ -1,3 +1,6 @@
+package Main;
+
+import java.net.URL;
 
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
@@ -5,6 +8,11 @@ import javax.swing.UnsupportedLookAndFeelException;
 import views.LoaderFrame;
 
 public class Main {
+
+	public static URL getResource(String url) {
+		return Main.class.getResource("/img/" + url);
+	}
+
 	public static void main(String[] args) {
 
 		try {

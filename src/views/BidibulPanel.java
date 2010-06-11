@@ -8,16 +8,18 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
+import Main.Main;
+
 public class BidibulPanel extends JPanel {
 	private static final long serialVersionUID = 1L;
 
 	private EyePanel _panLeftEye;
 	private EyePanel _panRightEye;
-	private ImageIcon _iconBidibul = new ImageIcon("img/bidibul200/bidibul.png");
+	private ImageIcon _iconBidibul = new ImageIcon(Main.getResource("bidibul200/bidibul.png"));
 	private JLabel _lblMouth;
 
-	public static final ImageIcon MOUTH_NOTICE_IMG = new ImageIcon("img/bidibul200/mouths/normal.png");
-	public static final ImageIcon MOUTH_ERROR_IMG = new ImageIcon("img/bidibul200/mouths/error.png");
+	public static final ImageIcon MOUTH_NOTICE_IMG = new ImageIcon(Main.getResource("bidibul200/mouths/normal.png"));
+	public static final ImageIcon MOUTH_ERROR_IMG = new ImageIcon(Main.getResource("bidibul200/mouths/error.png"));
 
 	public BidibulPanel(JFrame frame) {
 		super();

@@ -15,6 +15,7 @@ import javax.swing.JTextArea;
 
 import models.Flash;
 import models.FlashMessage;
+import Main.Main;
 
 /**
  * Panel des messages d'information et d'erreur
@@ -30,8 +31,8 @@ public class FlashPanel extends JPanel implements Observer {
 	private BidibulPanel _bidibul;
 	private Timer _timerHidingFlashPanel;
 
-	public static final ImageIcon NOTICE_BUBBLE_IMG = new ImageIcon("img/bidibul200/bubble_notice.png");//.getImage();
-	public static final ImageIcon ERROR_BUBBLE_IMG = new ImageIcon("img/bidibul200/bubble_error.png");//.getImage();
+	public static final ImageIcon NOTICE_BUBBLE_IMG = new ImageIcon(Main.getResource("bidibul200/bubble_notice.png"));
+	public static final ImageIcon ERROR_BUBBLE_IMG = new ImageIcon(Main.getResource("bidibul200/bubble_error.png"));
 
 	public FlashPanel(Flash model, BidibulPanel bidibul) {
 		_model = model;
