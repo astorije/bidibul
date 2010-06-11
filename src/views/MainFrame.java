@@ -1,5 +1,6 @@
 package views;
 
+import java.awt.Cursor;
 import java.awt.Image;
 import java.awt.MenuItem;
 import java.awt.Point;
@@ -9,6 +10,7 @@ import java.awt.Toolkit;
 import java.awt.TrayIcon;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.InputEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
@@ -40,7 +42,6 @@ public class MainFrame extends TranslucentFrame implements WindowListener, Mouse
 	private SystemTray _tray = null;
 	private TrayIcon _trayIcon = null;
 
-	private boolean mMoveStart = false;
 	private boolean moveableFrame = false;
 	private Point mMouseClickPoint = null;
 	static private int _CLICKABLE = 1;
@@ -132,7 +133,7 @@ public class MainFrame extends TranslucentFrame implements WindowListener, Mouse
 			// Clic gauche
 			if (e.getButton() == MouseEvent.BUTTON1) {
 				if (moveableFrame){
-					mMoveStart = false;
+					setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
 				}
 				else if (!_pieMenuPanel.isVisible()) {
 					_pieMenuPanel.refresh(_CLICKABLE);
@@ -147,10 +148,12 @@ public class MainFrame extends TranslucentFrame implements WindowListener, Mouse
 		}
 
 		@Override
-		public void mousePressed(MouseEvent mouseEvent) {
-			if (moveableFrame){
-				mMouseClickPoint = mouseEvent.getPoint();
-				mMoveStart = true;
+		public void mousePressed(MouseEvent e) {
+			if (moveableFrame && e.getButton() == MouseEvent.BUTTON1){
+				mMouseClickPoint = e.getPoint();
+				setCursor(Cursor.getPredefinedCursor(Cursor.MOVE_CURSOR));
+			} else if (moveableFrame && e.getButton() == MouseEvent.BUTTON2){
+				mMouseClickPoint = e.getPoint();
 			}
 		}
 	}
@@ -298,8 +301,10 @@ public class MainFrame extends TranslucentFrame implements WindowListener, Mouse
 
 	// Fonctions relatives au déplacement du bidibul à l'écran
 	@Override
-	public void mouseDragged(MouseEvent arg0) {
-		_moveWindowTo(arg0.getPoint());
+	public void mouseDragged(MouseEvent e) {
+		if ((e.getModifiers() & InputEvent.BUTTON1_MASK) == InputEvent.BUTTON1_MASK){
+			_moveWindowTo(e.getPoint());
+		}
 	}
 
 	@Override
