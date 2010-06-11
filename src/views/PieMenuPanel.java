@@ -117,6 +117,7 @@ public class PieMenuPanel extends JPanel {
 		int Y=sizeRotor, Yprim =sizeRotor;
 		double theta = thetaAngle;
 		int i, next = 1;
+		int decal = 1;
 		if (nbreIcons>8)
 		{
 			icons.put("icon" + num_icon_aff, new JLabel(new ImageIcon("img/next.png")));
@@ -134,9 +135,11 @@ public class PieMenuPanel extends JPanel {
 			next = 0;
 		} else {
 			next = 0;
+			decal = 0;
 		}
+
 		//Création dynamique des icones
-		for (i=num_icon_aff+next; i<=nbreIcons; i++)
+		for (i=num_icon_aff+decal; i<=nbreIcons; i++)
 		{
 			//Cas Clickable
 			if (mode == 1)
