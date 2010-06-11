@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.Iterator;
 
+import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
@@ -38,11 +39,12 @@ public class PieMenuPanel extends JPanel {
 	int nbreIcons = 0;
 	double thetaAngle;
 	double pi = 3.1416;
-	int sizeRotor = 150;
-	private static int _ICONSIZE = 70;
+	int sizeRotor = 135;
+	private static int _ICONSIZE = 50;
 	Boolean iconVisible = false;
 	String[] _listeFichier;
 	private static int _HEIGHT_FOR_HIDE = 30;
+	private int num_icon_aff = 1;
 
 	/**
 	 * Constructeur du PieMenu:
@@ -69,26 +71,6 @@ public class PieMenuPanel extends JPanel {
 		_listeFichier = listFichier.toArray(new String[listFichier.size()]);
 		_flavor = flavor;
 	}
-	/**
-	 * Rend le menu visible ou invisible
-	 * @param arg
-	 */
-	@Deprecated
-	public void setIconVisible(Boolean arg) { //affiche ou cache les icones du menu selon l'argument
-		for (int i=1; i<= nbreIcons; i++){
-			icons.get("icon" + i).setVisible(arg);
-		}
-		this.iconVisible = arg;
-	}
-
-	/**
-	 * Vérifie si le menu est actuellement en cours d'affichage
-	 * @return
-	 */
-	@Deprecated
-	public Boolean getIconVisible() { //renvoie l'état d'affichage des icones
-		return this.iconVisible;
-	}
 
 	/**
 	 * Cette fonction rafraichit le panel en fonction des modules à afficher
@@ -99,6 +81,7 @@ public class PieMenuPanel extends JPanel {
 	 * 		2: modules droppable
 	 */
 	public void refresh(int mode) {
+		num_icon_aff = 1;
 		if (mode == 1)
 		{
 			updateClickableModules();
@@ -109,18 +92,52 @@ public class PieMenuPanel extends JPanel {
 		}
 
 		nbreIcons = _listeAffichage.size();
-		System.out.println("rafraichissement demandé : "+nbreIcons+" icones");
-		thetaAngle = (2*pi/nbreIcons);
+		System.out.println("rafraichissement demandé : "+ (nbreIcons-num_icon_aff));
+
+		//Mise à zéro
+		Flash.down();
+		CreateDynamicIcon(mode);
+	}
+
+	/**
+	 * Création dynamique des icones
+	 */
+	private void CreateDynamicIcon(int mode)
+	{
+		if ((nbreIcons-num_icon_aff)<8)
+		{
+			thetaAngle = (2*pi/(nbreIcons-num_icon_aff+1));
+		} else {
+			thetaAngle = (2*pi/8);
+		}
+		System.out.println("num_icon_aff:" + num_icon_aff);
+		icons.clear();
+		this.removeAll();
 		int X=0, Xprim =0;
 		int Y=sizeRotor, Yprim =sizeRotor;
 		double theta = thetaAngle;
-		int i;
-		//Mise à zéro
-		icons.clear();
-		this.removeAll();
-		Flash.down();
-		//	Création dynamique des icones
-		for (i=1;i<=nbreIcons; i++) {
+		int i, next = 1;
+		if (nbreIcons>8)
+		{
+			icons.put("icon" + num_icon_aff, new JLabel(new ImageIcon("img/next.png")));
+			System.out.println("next is needed");
+			icons.get("icon" + num_icon_aff).setBounds(Xprim+_posX - _ICONSIZE/2, Yprim+_posY- _ICONSIZE/2, _ICONSIZE, _ICONSIZE);
+			icons.get("icon" + num_icon_aff).setVisible(true);
+			icons.get("icon" + num_icon_aff).addMouseListener(new actionOnClic(num_icon_aff, mode, next));
+			Xprim = (int) (X * Math.cos(theta) - Y * Math.sin(theta));
+			Yprim = (int) (X* Math.sin(theta) + Y * Math.cos(theta));
+			if (Yprim < _HEIGHT_FOR_HIDE) {
+				Flash.up();
+			}
+			theta+=thetaAngle;
+			this.add(icons.get("icon" + num_icon_aff));
+			next = 0;
+		} else {
+			next = 0;
+		}
+		//Création dynamique des icones
+		for (i=num_icon_aff+next; i<=nbreIcons; i++)
+		{
 			//Cas Clickable
 			if (mode == 1)
 			{
@@ -135,7 +152,7 @@ public class PieMenuPanel extends JPanel {
 			modules.put("icon" + i, _listeAffichage.get(i-1));
 			icons.get("icon" + i).setBounds(Xprim+_posX - _ICONSIZE/2, Yprim+_posY- _ICONSIZE/2, _ICONSIZE, _ICONSIZE);
 			icons.get("icon" + i).setVisible(true);
-			icons.get("icon" + i).addMouseListener(new actionOnClic(i, mode));
+			icons.get("icon" + i).addMouseListener(new actionOnClic(i, mode, next));
 			Xprim = (int) (X * Math.cos(theta) - Y * Math.sin(theta));
 			Yprim = (int) (X* Math.sin(theta) + Y * Math.cos(theta));
 			if (Yprim < _HEIGHT_FOR_HIDE) {
@@ -143,7 +160,11 @@ public class PieMenuPanel extends JPanel {
 			}
 			theta+=thetaAngle;
 			this.add(icons.get("icon" + i));
+			if (i==8) {
+				break;
+			}
 		}
+		this.setVisible(true);
 	}
 
 	/**
@@ -168,16 +189,27 @@ public class PieMenuPanel extends JPanel {
 	public class actionOnClic extends MouseAdapter {
 		int numIcon;
 		int mode;
-		public actionOnClic(int num, int iMode) {
+		int next;
+		public actionOnClic(int num, int iMode, int inext) {
 			numIcon = num;
 			mode = iMode;
+			next = inext;
 		}
 		// Entrée de survol du module
 		@Override
 		public void mouseEntered(MouseEvent e)
 		{
+			System.out.println("next: " + next);
+			if (next == 1)
+			{
+				String tooltip = "Autres modules disponibles";
+				Flash.notice(tooltip);
+				return;
+			}
 			if (mode == 1)
 			{
+				System.out.println("mode: " + mode);
+				System.out.println("numIcon: " + numIcon);
 				String tooltip = ((iClickable) modules.get("icon" + numIcon)).getClickTooltip();
 				Flash.notice(tooltip);
 			}
@@ -186,6 +218,7 @@ public class PieMenuPanel extends JPanel {
 				String tooltip = ((iDroppable) modules.get("icon" + numIcon)).getDropTooltip();
 				Flash.notice(tooltip);
 			}
+
 		}
 
 		//Sortie de survol du module
@@ -199,6 +232,18 @@ public class PieMenuPanel extends JPanel {
 		{
 			if (e.getButton() == MouseEvent.BUTTON1) 				//Si clic gauche
 			{
+				if (next == 1)
+				{
+					setVisible(false);
+					num_icon_aff += 7;
+					if (num_icon_aff>nbreIcons)
+					{
+						num_icon_aff = 1;
+					}
+					System.out.println("num_icon_aff:" + num_icon_aff);
+					CreateDynamicIcon(mode);
+					return;
+				}
 				// Cas du click
 				if (mode == 1)
 				{
