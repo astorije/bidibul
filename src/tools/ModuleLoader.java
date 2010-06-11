@@ -91,6 +91,7 @@ public class ModuleLoader {
 	 * @see ModuleLoader#findModulesName()
 	 * @see ModuleLoader#listModule
 	 */
+	@SuppressWarnings("unchecked")
 	public boolean loadModules(){
 		String[] jarName = findJarNames();
 		String propertiesFileName=null;
@@ -186,11 +187,20 @@ public class ModuleLoader {
 				return (arg1.endsWith(".jar")) ;
 			}
 		};
-
+		VerifyModuleDir();
 		File dir = new File("." + File.separator + moduleDir);
 		String[] fileNames = dir.list(javaFilter);
 
 		return fileNames;
+	}
+
+	/**
+	 * Vérifie si le dossier des modules existe. Si non, crée le dossier.
+	 */
+	private void VerifyModuleDir(){
+		File f = new File("." + File.separator + moduleDir);
+		if (!f.exists())
+			f.mkdir();
 	}
 
 	/**
