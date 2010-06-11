@@ -85,21 +85,41 @@ abstract public class BidibulInformation {
 			_prop.get(c.getCanonicalName()).put(property, value);
 	}
 
+	/**
+     * Renvoie le nom du module.
+     * @param c : la class du module
+     * @return String : le nom du module
+     */
 	public static String getName(Class<BidibulModule> c) {
 		String s = get("name", c);
 		return (s == null || s.equals("")) ? "Module sans nom" : s;
 	}
 
+	/**
+     * Renvoie la description du module.
+     * @param c : la class du module
+     * @return String : la description du module
+     */
 	public static String getDescription(Class<BidibulModule> c) {
 		String s = get("description", c);
 		return (s == null || s.equals("")) ? "Pas de description" : s;
 	}
 
+	/**
+     * Renvoie l'auteur du module.
+     * @param c : la class du module
+     * @return String : l'auteur du module
+     */
 	public static String getAuthor(Class<BidibulModule> c) {
 		String s = get("author", c);
 		return (s == null || s.equals("")) ? "Anonyme" : s;
 	}
 
+	/**
+     * Renvoie le site internet du module.
+     * @param c : la class du module
+     * @return String : le site internet du module
+     */
 	public static String getWebsite(Class<BidibulModule> c) {
 		return get("website", c);
 	}

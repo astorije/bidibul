@@ -20,15 +20,21 @@ import utils.BidibulModule;
  * @author Nicolas B.
  */
 public class ModuleLoader {
-	 /**
+	/**
      * L'instance du ModuleLoader.
      * @see ModuleLoader#getInstance()
      */
 	private static ModuleLoader _instance;
 
-	//private HashMap<Class<BidibulModule>, BidibulModule> _m;
-	private List<Class<BidibulModule>> _c;
-	private List<BidibulModule> _m;
+	/**
+     * La liste des class des modules chargés
+     */
+	private List<Class<BidibulModule>> _allClasses;
+
+	/**
+     * La liste des modules actifs
+     */
+	private List<BidibulModule> _activeModule;
 
 	/**
      * Le nom du dossier où sont stockés les .class des modules.
@@ -41,9 +47,8 @@ public class ModuleLoader {
 	 * @see ModuleLoader#getInstance()
 	 */
 	private ModuleLoader() {
-		//_m = new HashMap<Class<BidibulModule>, BidibulModule>();
-		_c = new ArrayList<Class<BidibulModule>>();
-		_m = new ArrayList<BidibulModule>();
+		_allClasses = new ArrayList<Class<BidibulModule>>();
+		_activeModule = new ArrayList<BidibulModule>();
 	}
 
 	/**
@@ -63,17 +68,9 @@ public class ModuleLoader {
 	 * @see ModuleLoader#loadModules()
 	 */
 	public List<BidibulModule> getListActiveModules(){
-		/*List<BidibulModule> l = new ArrayList<BidibulModule>();
-		Iterator<Class<BidibulModule>> i = _m.keySet().iterator();
-		while(i.hasNext()) {
-			BidibulModule m = _m.get(i.next());
-			if (m != null)
-				l.add(m);
-		}
-		return l;*/
 		List<BidibulModule> l = new ArrayList<BidibulModule>();
-		for (int i=0; i<_m.size(); i++) {
-			BidibulModule m = _m.get(i);
+		for (int i=0; i<_activeModule.size(); i++) {
+			BidibulModule m = _activeModule.get(i);
 			if (m != null)
 				l.add(m);
 		}
@@ -85,8 +82,8 @@ public class ModuleLoader {
 	 * @return Set<Class<BidibulModule>> null si aucun module chargé
 	 * @see ModuleLoader#loadModules()
 	 */
-	public /*Set<Class<BidibulModule>>*/List<Class<BidibulModule>> /*getSetAllModules*/getListAllModules(){
-		return _c;
+	public List<Class<BidibulModule>> getListAllModules(){
+		return _allClasses;
 	}
 
 	/**
@@ -103,11 +100,11 @@ public class ModuleLoader {
 
 		if (jarName != null){
 			Enumeration<JarEntry> jarFiles;
-			_m.clear();
+			_activeModule.clear();
 			for (int i=0; i<jarName.length; i++){
 				// Prépare le ClassLoader
 				try {
-					loader = new URLClassLoader(new URL[] {new URL("file:///" + System.getProperty("user.dir") + "/" + moduleDir + "/" + jarName[i])});
+					loader = new URLClassLoader(new URL[] {new URL("file:///" + System.getProperty("user.dir") + File.separator + moduleDir + File.separator + jarName[i])});
 				} catch (MalformedURLException e) {
 					e.printStackTrace(); return false;
 				}
@@ -115,7 +112,7 @@ public class ModuleLoader {
 				//On charge le jar en mémoire
 				JarFile jar = null;
 				try {
-					jar = new JarFile("./" + moduleDir + "/" + jarName[i]);
+					jar = new JarFile("."+File.separator + moduleDir + File.separator + jarName[i]);
 				} catch (IOException e) {
 					e.printStackTrace(); return false;
 				}
@@ -135,24 +132,21 @@ public class ModuleLoader {
 						className = className.replaceAll("/",".");
 
 						try {
-							Class<?> externalClass = Class.forName(className ,true,loader);
-							//Class<?> externalClass = loader.loadClass(className);
+							Class<?> externalClass = Class.forName(className ,true,loader); //ou : Class<?> externalClass = loader.loadClass(className);
 
 							// Vérifie que la classe est un BidibulModule
 							if (extends_BidibulModule(externalClass) ) {
 								c  = (Class<BidibulModule>) externalClass;
-								_c.add(c);
+								_allClasses.add(c);
 								classLoaded = true;
-								//BidibulInformation.add(c, jar);
 								BidibulProperties p = new BidibulProperties("global");
 								if (p.get(c.getCanonicalName()) != null && p.get(c.getCanonicalName()).equals("0")) {
-									_m.add(null);
+									_activeModule.add(null);
 									System.out.println("BidibulModule inactif: " + externalClass.getCanonicalName());
 								} else {
-									//startModule(c);
 									BidibulModule m  = c.newInstance();
 									m.onLoad();
-									_m.add(_c.indexOf(c), m);
+									_activeModule.add(_allClasses.indexOf(c), m);
 									m.addObserver(Flash.getInstance());
 									System.out.println("BidibulModule actif : " + externalClass.getCanonicalName());
 								}
@@ -166,17 +160,15 @@ public class ModuleLoader {
 							e.printStackTrace();
 						}
 					}
-					else if(fileName.endsWith(".properties")){
+					else if(fileName.endsWith(".properties"))
 						propertiesFileName = fileName;
-					}
-
 				}
-			}
-			if (classLoaded){
-				InputStream in = loader.getResourceAsStream(propertiesFileName);
-				BidibulInformation.add(c, in);
-				classLoaded = false;
-				propertiesFileName = null;
+				if (classLoaded){
+					InputStream in = loader.getResourceAsStream(propertiesFileName);
+					BidibulInformation.add(c, in);
+					classLoaded = false;
+					propertiesFileName = null;
+				}
 			}
 		}
 		return true;
@@ -195,7 +187,7 @@ public class ModuleLoader {
 			}
 		};
 
-		File dir = new File("./" + moduleDir);
+		File dir = new File("." + File.separator + moduleDir);
 		String[] fileNames = dir.list(javaFilter);
 
 		return fileNames;
@@ -220,63 +212,37 @@ public class ModuleLoader {
 		}
 	}
 
-//	private void stopModule(Class<BidibulModule> c){
-//		/*if (_m.containsKey(c)) {
-//			_m.put(c, null);*/
-//		if (_c.contains(c)) {
-//			_m.set(_c.indexOf(c), null);
-//			System.out.println("Arrêt module : " + BidibulInformation.get("name", c));
-//			// Sauvegarde
-//			BidibulProperties p = new BidibulProperties("global");
-//			p.put(c.getCanonicalName(), "0");
-//			p.save();
-//		}
-//	}
-
+	/**
+	 * Supprime le module de la liste des modules et appelle BidibulModule.onStop()
+	 * @param n : le numéro du module dans la liste
+	 */
 	public void stopModule(int n){
-		/*if (_m.containsKey(c)) {
-			_m.put(c, null);*/
-		if (_c.size() >= n) {
-			_m.get(n).onStop();
-			_m.set(n, null);
-			System.out.println("Arrêt module : " + BidibulInformation.get("name", _c.get(n)));
+		if (_allClasses.size() >= n) {
+			_activeModule.get(n).onStop();
+			_activeModule.set(n, null);
+			System.out.println("Arrêt module : " + BidibulInformation.get("name", _allClasses.get(n)));
 			// Sauvegarde
 			BidibulProperties p = new BidibulProperties("global");
-			p.put(_c.get(n).getCanonicalName(), "0");
+			p.put(_allClasses.get(n).getCanonicalName(), "0");
 			p.save();
 		}
 	}
 
-//	private void startModule(Class<BidibulModule> c){
-//		try {
-//			BidibulModule m  = c.newInstance();
-//			//_m.put(c, m);
-//			_m.remove(_c.indexOf(c));
-//			_m.add(_c.indexOf(c), m);
-//			m.addObserver(Flash.getInstance());
-//			System.out.println("Démarrage module : " + BidibulInformation.get("name", c));
-//			// Sauvegarde
-//			BidibulProperties p = new BidibulProperties("global");
-//			p.put(c.getCanonicalName(), "1");
-//			p.save();
-//		} catch (InstantiationException e) {
-//			e.printStackTrace();
-//		} catch (IllegalAccessException e) {
-//			e.printStackTrace();
-//		}
-//	}
-
+	/**
+	 * Ajoute le module à la liste des modules et appelle BidibulModule.onLoad()
+	 * @param n : le numéro du module dans la liste
+	 */
 	public void startModule(int n){
 		try {
-			BidibulModule m  = _c.get(n).newInstance();
+			BidibulModule m  = _allClasses.get(n).newInstance();
 			m.onLoad();
-			_m.remove(n);
-			_m.add(n, m);
+			_activeModule.remove(n);
+			_activeModule.add(n, m);
 			m.addObserver(Flash.getInstance());
-			System.out.println("Démarrage module : " + BidibulInformation.get("name", _c.get(n)));
+			System.out.println("Démarrage module : " + BidibulInformation.get("name", _allClasses.get(n)));
 			// Sauvegarde
 			BidibulProperties p = new BidibulProperties("global");
-			p.put(_c.get(n).getCanonicalName(), "1");
+			p.put(_allClasses.get(n).getCanonicalName(), "1");
 			p.save();
 		} catch (InstantiationException e) {
 			e.printStackTrace();
@@ -285,9 +251,12 @@ public class ModuleLoader {
 		}
 	}
 
+	/**
+	 * Renvoie true si le module est actuellement activé. False sinon.
+	 * @param c : la classe du module
+	 */
 	public boolean isActive(Class<BidibulModule> c){
-		//_m.get(c);
-		if (/*_m.get(c)*/_m.get(_c.indexOf(c)) != null)
+		if (_activeModule.get(_allClasses.indexOf(c)) != null)
 			return true;
 		return false;
 	}

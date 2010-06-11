@@ -142,9 +142,9 @@ public class Frame extends JFrame{
 	private void createFile() {
 		String res = model.createFile(name_field.getText(), description_field.getText(), author_field.getText(), website_field.getText());
 		if ( res != null)
-			res = "\nLe fichier a été créé avec succès ("+res+").\n\n"+"Veuillez l'intégrer au .jar de votre module.";
+			res = "\r\nLe fichier a été créé avec succès ("+res+").\r\n\r\n"+"Veuillez l'intégrer au .jar de votre module.";
 		else
-			res = "\nLa création du fichier a échoué.\n\nVérifiez que vous avez indiqué le nom du module.";
+			res = "\r\nLa création du fichier a échoué.\r\n\r\nVérifiez que vous avez indiqué le nom du module.";
 		result.setText(res);
 		result.setVisible(true);
 	}

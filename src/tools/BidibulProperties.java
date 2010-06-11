@@ -39,10 +39,10 @@ public class BidibulProperties extends Properties {
 		_name = name;
 		_propertiesDir = "properties";
 
-		File f = new File(_propertiesDir + "/" + name + ".properties");
+		File f = new File(_propertiesDir + File.separator + name + ".properties");
 		if (f.exists()) {
 			try {
-				this.load(new FileInputStream(_propertiesDir + "/" + name + ".properties"));
+				this.load(new FileInputStream(_propertiesDir + File.separator + name + ".properties"));
 			} catch (FileNotFoundException e) {
 				e.printStackTrace();
 			} catch (IOException e) {
@@ -82,7 +82,7 @@ public class BidibulProperties extends Properties {
 				f.mkdir();
 			OutputStream out;
 			try {
-				out = new FileOutputStream(_propertiesDir + "/" + _name + ".properties");
+				out = new FileOutputStream(_propertiesDir + File.separator + _name + ".properties");
 				this.store(out, null);
 				out.flush();
 				out.close();
@@ -105,7 +105,7 @@ public class BidibulProperties extends Properties {
 		if (_propertiesDir != null) {
 			BidibulProperties p = new BidibulProperties(name);
 			try {
-				p.load(new FileInputStream(_propertiesDir + "/" + name + ".properties"));
+				p.load(new FileInputStream(_propertiesDir + File.separator + name + ".properties"));
 			} catch (FileNotFoundException e) {
 				e.printStackTrace(); return null;
 			} catch (IOException e) {
@@ -116,6 +116,10 @@ public class BidibulProperties extends Properties {
 		return null;
 	}
 
+	/**
+	 * Retourne la position sauvegardé pour x du Bidibul
+	 * @return int : la position
+	 */
 	public int getPosX() {
 		String str = getProperty("posX");
 		if(str != null && Integer.parseInt(str) >= 0)
@@ -123,6 +127,10 @@ public class BidibulProperties extends Properties {
 		else return 100;
 	}
 
+	/**
+	 * Retourne la position sauvegardé pour y du Bidibul
+	 * @return int : la position
+	 */
 	public int getPosY() {
 		String str = getProperty("posY");
 		if(str != null && Integer.parseInt(str) >= 0)
@@ -130,6 +138,10 @@ public class BidibulProperties extends Properties {
 		else return 100;
 	}
 
+	/**
+	 * Retourne true si la propriétée sauvegardée alwaysOnTop est à 1. False sinon.
+	 * @return boolean
+	 */
 	public boolean isAlwaysOnTop() {
 		return (getProperty("alwaysOnTop")).equals("1");
 	}

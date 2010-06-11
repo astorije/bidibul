@@ -1,5 +1,6 @@
 package CreateBidibulProperties.model;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -24,7 +25,7 @@ public class Model {
 			String dir = null;
 			OutputStream out;
 			try {
-				dir = System.getProperty("user.dir") + "/" + name + ".properties";
+				dir = System.getProperty("user.dir") + File.separator + name.replaceAll(" ","_") + ".properties";
 				out = new FileOutputStream(dir);
 				prop.store(out, "Information sur le module " + name);
 				out.flush();
