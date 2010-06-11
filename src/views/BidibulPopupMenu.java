@@ -89,7 +89,7 @@ public class BidibulPopupMenu extends JPopupMenu implements ActionListener,
 		p.put("posY", ((Integer) _instance._frame.getLocation().y).toString());
 		p.save();
 
-		Flash.notice("          A bientôt !");
+		Flash.notice("         A bientôt !");
 
 		new Thread(new Runnable() {
 			public void run() {

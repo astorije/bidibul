@@ -60,7 +60,7 @@ public class FlashPanel extends JPanel implements Observer {
 		scrollpanMessage.setOpaque(false); // Composant ET viewport doivent être transparents
 		scrollpanMessage.getViewport().setOpaque(false);
 		scrollpanMessage.setBounds( // Position du JTextArea
-			13, 16, 177, 36
+			18, 16, 168, 43
 		);
 		add(scrollpanMessage);
 
