@@ -143,6 +143,6 @@ public class BidibulProperties extends Properties {
 	 * @return boolean
 	 */
 	public boolean isAlwaysOnTop() {
-		return (getProperty("alwaysOnTop")).equals("1");
+		return (getProperty("alwaysOnTop") != null ? getProperty("alwaysOnTop") : "0").equals("1");
 	}
 }
