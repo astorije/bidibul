@@ -40,7 +40,7 @@ public class PieMenuPanel extends JPanel {
 	int nbreIcons = 0;
 	double thetaAngle;
 	double pi = 3.1416;
-	int sizeRotor = 135;
+	int sizeRotor = 150;
 	private static int _ICONSIZE = 50;
 	Boolean iconVisible = false;
 	String[] _listeFichier;
@@ -55,14 +55,17 @@ public class PieMenuPanel extends JPanel {
 	 */
 	public PieMenuPanel(int PosX, int PosY){//constructor
 		setLayout(null);
+		//_listIcon = listIcon;
 		_posX = PosX;
 		_posY = PosY;
 		icons = new Hashtable<String, JLabel>();
 		modules = new Hashtable<String, BidibulModule>();
 		_listeAffichage = new ArrayList<BidibulModule>();
 		_listeModules = new ArrayList<BidibulModule>();
+//		_container.update(_container.getGraphics());
 		setVisible(false);
 		setOpaque(false);
+	//	_listeFichier;
 	}
 
 	public void setFichierInfo(ArrayList<String> listFichier, DataFlavor flavor) {
@@ -155,7 +158,6 @@ public class PieMenuPanel extends JPanel {
 			icons.get("icon" + i).setBounds(Xprim+_posX - _ICONSIZE/2, Yprim+_posY- _ICONSIZE/2, _ICONSIZE, _ICONSIZE);
 			icons.get("icon" + i).setVisible(true);
 			icons.get("icon" + i).addMouseListener(new actionOnClic(i, mode, next));
-			icons.get("icon" + i).setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 			Xprim = (int) (X * Math.cos(theta) - Y * Math.sin(theta));
 			Yprim = (int) (X* Math.sin(theta) + Y * Math.cos(theta));
 			if (Yprim < _HEIGHT_FOR_HIDE) {
@@ -167,6 +169,7 @@ public class PieMenuPanel extends JPanel {
 				break;
 			}
 		}
+		this.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 		this.setVisible(true);
 	}
 
