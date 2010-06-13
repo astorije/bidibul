@@ -137,7 +137,7 @@ public class MainFrame extends TranslucentFrame implements WindowListener, Mouse
 			// Clic gauche
 			if (e.getButton() == MouseEvent.BUTTON1) {
 				if (moveableFrame){
-					setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+					_bidibul.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 				}
 				else if (!_pieMenuPanel.isVisible()) {
 					_pieMenuPanel.refresh(_CLICKABLE);
@@ -155,7 +155,7 @@ public class MainFrame extends TranslucentFrame implements WindowListener, Mouse
 		public void mousePressed(MouseEvent e) {
 			if (moveableFrame && e.getButton() == MouseEvent.BUTTON1){
 				mMouseClickPoint = e.getPoint();
-				setCursor(Cursor.getPredefinedCursor(Cursor.MOVE_CURSOR));
+				_bidibul.setCursor(Cursor.getPredefinedCursor(Cursor.MOVE_CURSOR));
 			} else if (moveableFrame && e.getButton() == MouseEvent.BUTTON2){
 				mMouseClickPoint = e.getPoint();
 			}
