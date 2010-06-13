@@ -1,5 +1,6 @@
 package views;
 
+import java.awt.Cursor;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -125,6 +126,7 @@ public class PieMenuPanel extends JPanel {
 			icons.get("icon" + num_icon_aff).setBounds(Xprim+_posX - _ICONSIZE/2, Yprim+_posY- _ICONSIZE/2, _ICONSIZE, _ICONSIZE);
 			icons.get("icon" + num_icon_aff).setVisible(true);
 			icons.get("icon" + num_icon_aff).addMouseListener(new actionOnClic(num_icon_aff, mode, next));
+
 			Xprim = (int) (X * Math.cos(theta) - Y * Math.sin(theta));
 			Yprim = (int) (X* Math.sin(theta) + Y * Math.cos(theta));
 			if (Yprim < _HEIGHT_FOR_HIDE) {
@@ -167,6 +169,7 @@ public class PieMenuPanel extends JPanel {
 				break;
 			}
 		}
+		this.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 		this.setVisible(true);
 	}
 
