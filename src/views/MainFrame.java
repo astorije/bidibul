@@ -84,7 +84,7 @@ public class MainFrame extends TranslucentFrame implements WindowListener, Mouse
 		else
 			setAlwaysOnTop(false);
 
-		setSize(500, 500);
+		setSize(350, 450);
 		setLayout(null);
 
 		// --CREATION DU BIDIBUL
@@ -108,14 +108,18 @@ public class MainFrame extends TranslucentFrame implements WindowListener, Mouse
 		Flash.notice("Clique ou déplace un fichier sur moi !");
 		add(_panFlash);
 
-		addMouseListener(this);
-
-		// PieMenuPanel
-		_pieMenuPanel = new PieMenuPanel (_bidibul.getX()+ _bidibul.getWidth()/2, _bidibul.getY()+ _bidibul.getHeight()/2 );
-		_pieMenuPanel.setBounds(0, 0 , 500, 500);
-		add(_pieMenuPanel);
+		_bidibul.addMouseListener(this);
+		_panFlash.addMouseListener(this);
 
 		add(_bidibul);
+
+		// PieMenuPanel
+		_pieMenuPanel = new PieMenuPanel (
+				_bidibul.getX() + _bidibul.getWidth()/2,
+				_bidibul.getY() + _bidibul.getHeight()/2
+		);
+		_pieMenuPanel.setBounds(0, 0 , 350, 450);
+		add(_pieMenuPanel);
 
 		// Création du menu contextuel
 		_bibidulPopupMenu = new BidibulPopupMenu(this);
@@ -280,8 +284,6 @@ public class MainFrame extends TranslucentFrame implements WindowListener, Mouse
 	 */
 	@Override
 	public void mouseExited(MouseEvent e) {
-		if(getMousePosition(true) != null)
-			return;
 		_panFlash.onMouseExit();
 	}
 

@@ -1,5 +1,6 @@
 package views;
 
+import java.awt.Cursor;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -25,6 +26,7 @@ public class BidibulPanel extends JPanel {
 		super();
 		setLayout(null);
 		setOpaque(false);
+		setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 
 		JLabel bidibul = new JLabel(_iconBidibul);
 		bidibul.setBounds(0, 0, getWidth(), getHeight());

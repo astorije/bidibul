@@ -1,6 +1,7 @@
 package views;
 
 import java.awt.Font;
+import java.awt.event.MouseListener;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.Timer;
@@ -78,6 +79,7 @@ public class FlashPanel extends JPanel implements Observer {
 	public void displayError(String msg) {
 		_backgroundImage.setIcon(ERROR_BUBBLE_IMG);
 		_txtaMessage.setText(msg);
+		_txtaMessage.setCaretPosition(0);
 		_bidibul.setMouth("error");
 		showBubble();
 	}
@@ -85,6 +87,7 @@ public class FlashPanel extends JPanel implements Observer {
 	public void displayNotice(String msg) {
 		_backgroundImage.setIcon(NOTICE_BUBBLE_IMG);
 		_txtaMessage.setText(msg);
+		_txtaMessage.setCaretPosition(0);
 		_bidibul.setMouth("notice");
 		showBubble();
 	}
@@ -129,5 +132,11 @@ public class FlashPanel extends JPanel implements Observer {
 		if(_timerHidingFlashPanel != null) {
 			_timerHidingFlashPanel.cancel();
 		}
+	}
+
+	@Override
+	public void addMouseListener(MouseListener l) {
+		super.addMouseListener(l);
+		_txtaMessage.addMouseListener(l);
 	}
 }
