@@ -18,6 +18,7 @@ import tools.ModuleLoader;
 import utils.BidibulModule;
 import utils.iClickable;
 import utils.iDroppable;
+import Main.Main;
 
 
 /**
@@ -121,7 +122,7 @@ public class PieMenuPanel extends JPanel {
 		int decal = 1;
 		if (nbreIcons>8)
 		{
-			icons.put("icon" + num_icon_aff, new JLabel(new ImageIcon("img/next.png")));
+			icons.put("icon" + num_icon_aff, new JLabel(new ImageIcon(Main.getResource("next.png"))));
 			System.out.println("next is needed");
 			icons.get("icon" + num_icon_aff).setBounds(Xprim+_posX - _ICONSIZE/2, Yprim+_posY- _ICONSIZE/2, _ICONSIZE, _ICONSIZE);
 			icons.get("icon" + num_icon_aff).setVisible(true);
